@@ -1,14 +1,29 @@
+<!-- Login.vue -->
 <script setup lang="ts">
 	import { ref } from "vue";
 	import { useRouter } from "vue-router";
+	import axios from "axios";
 
 	const nis = ref("");
 	const pass = ref("");
 
 	const router = useRouter();
 
-	const login = () => {
-		router.push("/");
+	const login = async () => {
+		try {
+			const response = await axios.post("http://localhost:8080/user/login", {
+				nis: nis.value,
+				passphrase: pass.value,
+			});
+
+			const { token } = response.data;
+
+			localStorage.setItem("token", token);
+
+			router.push("/");
+		} catch (error) {
+			console.error("Error logging in:");
+		}
 	};
 </script>
 
@@ -19,7 +34,7 @@
 			<div class="form-inputs">
 				<div class="form-input">
 					<label for="nis">NIS :</label>
-					<input v-model="nis" type="text" id="nis" name="nis" />
+					<input v-model="nis" type="number" id="nis" name="nis" />
 				</div>
 				<div class="form-input">
 					<label for="pass">Passphrase :</label>

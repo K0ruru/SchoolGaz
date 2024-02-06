@@ -9,10 +9,12 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: "/",
 		component: Dashboard,
+		meta: { requiresAuth: true },
 	},
 	{
 		path: "/kelas",
 		component: Kelas,
+		meta: { requiresAuth: true },
 	},
 	{
 		path: "/signup",

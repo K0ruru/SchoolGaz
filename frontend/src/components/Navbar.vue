@@ -9,6 +9,11 @@
 		tabAktif.value = tab;
 		router.push(`/${tab}`);
 	};
+
+	const logout = () => {
+		localStorage.removeItem("token");
+		router.push("/login");
+	};
 </script>
 
 <template>
@@ -38,6 +43,7 @@
 						Tugas
 					</li>
 				</ul>
+				<button class="logout" @click="logout">Log-out</button>
 			</div>
 		</div>
 	</nav>
@@ -78,5 +84,12 @@
 	.active {
 		font-weight: bold;
 		border-bottom: 2px solid white;
+	}
+
+	.logout {
+		border: none;
+		background-color: red;
+		color: white;
+		padding: 10px 20px;
 	}
 </style>

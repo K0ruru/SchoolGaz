@@ -1,10 +1,11 @@
 <script setup lang="ts">
 	import { ref } from "vue";
 	import { useRouter } from "vue-router";
+	import axios from "axios";
 
 	const nis = ref("");
 	const nama = ref("");
-	const pass = ref("");
+	const passphrase = ref(""); // Change "pass" to "passphrase"
 	const passConfirm = ref("");
 	const email = ref("");
 	const noTelp = ref("");
@@ -13,8 +14,46 @@
 
 	const router = useRouter();
 
-	const signUp = () => {
-		router.push("/");
+	const signUp = async () => {
+		if (passphrase.value.length < 8) {
+			console.error("Password must be at least 8 characters long");
+			return;
+		}
+
+		if (passphrase.value !== passConfirm.value) {
+			console.error("Passwords do not match");
+			return;
+		}
+
+		try {
+			const response = await axios.post(
+				"http://localhost:8080/user/add",
+				{
+					nis: nis.value,
+					nama: nama.value,
+					passphrase: passphrase.value,
+					email: email.value,
+					no_telp: noTelp.value,
+					jenkel: jenkel.value,
+					agama: agama.value,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			const { user, token } = response.data;
+
+			localStorage.setItem("token", token);
+
+			console.log(response.data);
+
+			router.push("/");
+		} catch (error) {
+			console.error("Error signing up:");
+		}
 	};
 </script>
 
@@ -25,7 +64,7 @@
 			<div class="form-inputs">
 				<div class="form-input">
 					<label for="nis">NIS :</label>
-					<input v-model="nis" type="text" id="nis" name="nis" />
+					<input v-model="nis" type="number" id="nis" name="nis" />
 				</div>
 				<div class="form-input">
 					<label for="nama">Nama :</label>
@@ -33,7 +72,7 @@
 				</div>
 				<div class="form-input">
 					<label for="pass">Passphrase :</label>
-					<input v-model="pass" type="password" id="pass" name="pass" />
+					<input v-model="passphrase" type="password" id="pass" name="pass" />
 				</div>
 				<div class="form-input">
 					<label for="pass-confirm">Confirm Passphrase :</label>
