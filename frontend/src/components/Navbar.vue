@@ -17,79 +17,119 @@
 </script>
 
 <template>
-	<nav>
-		<div class="container">
-			<div class="nav-content">
-				<div class="nav-logo">
-					<h1>SkoolGaz</h1>
-				</div>
-				<ul class="nav-links">
-					<li
-						:class="{ 'nav-link': true, active: tabAktif === 'Dashboard' }"
-						@click="navigasi('')"
-					>
-						Home
-					</li>
-					<li
-						:class="{ 'nav-link': true, active: tabAktif === 'kelas' }"
-						@click="navigasi('kelas')"
-					>
-						Kelas
-					</li>
-					<li
-						:class="{ 'nav-link': true, active: tabAktif === 'tugas' }"
-						@click="navigasi('tugas')"
-					>
-						Tugas
-					</li>
-				</ul>
-				<button class="logout" @click="logout">Log-out</button>
-			</div>
-		</div>
-	</nav>
+  <div class="header-container">
+    <div class="brand-logo">SchoolGaz</div>
+    <div class="menu-container">
+      <div class="menu-items">
+        <a href="#" class="menu-item" :class="{ active: tabAktif === 'Dashboard' }" @click="navigasi('')">Home</a>
+        <a href="#" class="menu-item" :class="{ active: tabAktif === 'kelas' }" @click="navigasi('kelas')">Students</a>
+        <a href="#" class="menu-item" :class="{ active: tabAktif === 'tugas' }" @click="navigasi('tugas')">Teachers</a>
+        <a href="#" class="menu-item" :class="{ active: tabAktif === 'tugas' }" @click="navigasi('tugas')">Assignments</a>
+      </div>
+    </div>
+    <div class="profile-section">PROFILE</div>
+  </div>
 </template>
 
+
 <style scoped>
-	nav {
-		background-color: #333;
-		color: white;
-	}
+.header-container {
+  align-self: stretch;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 16px;
+  color: #000;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0 1px;
+}
 
-	.container {
-		max-width: 1200px;
-		margin: 0 auto;
-	}
+@media (max-width: 991px) {
+  .header-container {
+    max-width: 100%;
+    flex-wrap: wrap;
+    white-space: initial;
+  }
+}
 
-	.nav-content {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 10px 0;
-	}
+.brand-logo {
+  align-self: start;
+  margin-top: 8px;
+  flex-grow: 1;
+  flex-basis: auto;
+  font: 22px Poppins, sans-serif;
+}
 
-	.nav-logo h1 {
-		margin: 0;
-	}
+.menu-container {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 0%;
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 400;
+  margin: auto 0;
+  padding: 0 60px;
+}
 
-	.nav-links {
-		list-style-type: none;
-		display: flex;
-	}
+@media (max-width: 991px) {
+  .menu-container {
+    max-width: 100%;
+    white-space: initial;
+    padding: 0 20px;
+  }
+}
 
-	.nav-link {
-		cursor: pointer;
-		padding: 10px;
-	}
+.menu-items {
+  display: flex;
+  width: 333px;
+  max-width: 100vw;
+  justify-content: center;
+  gap: 20px;
+  /* margin-right: 290px; */
+   position: absolute;
+  /* top: 50%; */
+  left: 50%;
+  transform: translateX(-50%) ;
+}
 
-	.active {
-		font-weight: bold;
-		border-bottom: 2px solid white;
-	}
+@media (max-width: 991px) {
+  .menu-items {
+    white-space: initial;
+  /* margin-right: 290px; */
+   position: absolute;
+  /* top: 50%; */
+  left: 50%;
+  transform: translateX(-50%) translateY(-190%) ;
+  }
+}
 
-	.logout {
-		border: none;
-		background-color: red;
-		color: white;
-		padding: 10px 20px;
-	}
+.menu-item {
+  color: #000;
+  font-family: Poppins, sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.active {
+  /* font-weight: bold; */
+  /* border-bottom: 2px solid #000; */
+}
+
+.profile-section {
+  font-family: Poppins, sans-serif;
+  justify-content: center;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 10px 25px;
+}
+
+@media (max-width: 991px) {
+  .profile-section {
+    white-space: initial;
+    /* padding: 0 20px; */
+  }
+}
 </style>
