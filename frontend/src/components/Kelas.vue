@@ -1,69 +1,137 @@
 <script setup lang="ts">
-import Navbar from "./Navbar.vue";
+	import Navbar from "./Navbar.vue";
+	import Swal from "sweetalert2";
+	import { ref, onMounted, computed } from "vue";
+
+	interface UserData {
+		nis: number;
+		name: string;
+		passphrase: string;
+		email: string;
+		gender: string;
+		religion: string;
+		status: string;
+	}
+
+	const search = ref("");
+	const data = ref<Array<UserData>>([]);
+
+	const fetchData = async () => {
+		try {
+			const response = await fetch("http://localhost:8080/Auth/");
+			const result = await response.json();
+			data.value = result;
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	};
+
+	onMounted(() => {
+		fetchData();
+	});
+
+	const tambahData = () => {
+		// Logic for adding data
+	};
+
+	const hapusData = async (nis: number) => {
+		try {
+			const result = await Swal.fire({
+				title: "Are you sure?",
+				text: "You will not be able to recover this user!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "Yes, delete it!",
+				cancelButtonText: "Cancel",
+			});
+
+			if (result.isConfirmed) {
+				const response = await fetch(
+					`http://localhost:8080/Auth/delete/${nis}`,
+					{
+						method: "DELETE",
+					}
+				);
+
+				if (response.ok) {
+					// Remove the deleted user from the data array
+					data.value = data.value.filter((userData) => userData.nis !== nis);
+					Swal.fire("Deleted!", "User has been deleted.", "success");
+					console.log(`User with NIS ${nis} deleted successfully.`);
+				} else {
+					console.error(`Failed to delete user with NIS ${nis}.`);
+					Swal.fire("Error!", "Failed to delete user.", "error");
+				}
+			} else {
+				// Handle cancellation
+				console.log("Deletion cancelled.");
+			}
+		} catch (error) {
+			console.error("Error deleting user:", error);
+			Swal.fire("Error!", "Failed to delete user.", "error");
+		}
+	};
+
+	const filteredData = computed(() => {
+		return data.value.filter((userData) =>
+			userData.name.toLowerCase().includes(search.value.toLowerCase())
+		);
+	});
 </script>
 
-<!-- <template> -->
-<!--   <div class="container"> -->
-<!--     <Navbar /> -->
-<!--     <div class="kelas-content"></div> -->
-<!--   </div> -->
-<!-- </template> -->
-<!---->
-<!-- <style scoped></style> -->
 <template>
-  <div class="container">
-  <Navbar />
-    <div>
-      <input v-model="search" placeholder="Search...">
-      <button @click="tambahData">Tambah</button>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>NIS</th>
-          <th>Nama</th>
-          <th>Passphrase</th>
-          <th>E-mail</th>
-          <th>No-Telp</th>
-          <th>Jenis Kelamin</th>
-          <th>Agama</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="data in filteredData" :key="data.NIS">
-          <td>{{ data.NIS }}</td>
-          <td>{{ data.Nama }}</td>
-          <td>{{ data.Passphrase }}</td>
-          <td>{{ data.ConfirmPassphrase }}</td>
-          <td>{{ data.Email }}</td>
-          <td>{{ data.NoTelp }}</td>
-          <td>{{ data.JenisKelamin }}</td>
-          <td>{{ data.Agama }}</td>
-          <td>
-            <button @click="editData(data.NIS)">Edit</button>
-            <button @click="hapusData(data.NIS)">Hapus</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+	<div class="container">
+		<Navbar />
+		<div>
+			<input v-model="search" placeholder="Search..." />
+			<button @click="tambahData">Tambah</button>
+		</div>
+		<table>
+			<thead>
+				<tr>
+					<th>NIS</th>
+					<th>Nama</th>
+					<th>Passphrase</th>
+					<th>E-mail</th>
+					<th>No-Telp</th>
+					<th>Jenis Kelamin</th>
+					<th>Agama</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="userData in filteredData" :key="userData.nis">
+					<td>{{ userData.nis }}</td>
+					<td>{{ userData.name }}</td>
+					<td>{{ userData.passphrase }}</td>
+					<td>{{ userData.email }}</td>
+					<td>{{ userData.gender }}</td>
+					<td>{{ userData.religion }}</td>
+					<td>{{ userData.status }}</td>
+					<td>
+						<button>Edit</button>
+						<button @click="hapusData(userData.nis)">Hapus</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </template>
 
 <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
 
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
+	th,
+	td {
+		border: 1px solid #ddd;
+		padding: 8px;
+		text-align: left;
+	}
 
-th {
-  background-color: #f2f2f2;
-}
+	th {
+		background-color: #f2f2f2;
+	}
 </style>
-
