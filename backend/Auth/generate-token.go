@@ -1,8 +1,9 @@
 package auth
 
 import (
-    "time"
-    "github.com/dgrijalva/jwt-go"
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 func CreateToken(nis int) (string, error) {

@@ -30,12 +30,12 @@
 				"http://localhost:8080/Auth/add",
 				{
 					nis: nis.value,
-					nama: nama.value,
+					name: nama.value,
 					passphrase: passphrase.value,
 					email: email.value,
 					no_telp: noTelp.value,
-					jenkel: jenkel.value,
-					agama: agama.value,
+					gender: jenkel.value,
+					religion: agama.value,
 				},
 				{
 					headers: {
@@ -44,13 +44,9 @@
 				}
 			);
 
-			const { token } = response.data;
-
-			localStorage.setItem("token", token);
-
 			console.log(response.data);
 
-			router.push("/");
+			router.push("/login");
 		} catch (error) {
 			console.error("Error signing up:");
 		}

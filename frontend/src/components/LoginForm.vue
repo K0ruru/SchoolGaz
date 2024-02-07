@@ -16,7 +16,12 @@
 				passphrase: pass.value,
 			});
 
-			const { token } = response.data;
+			const { token, status } = response.data;
+
+			if (status != "active") {
+				alert("Akun anda tidak aktif");
+				return;
+			}
 
 			localStorage.setItem("token", token);
 

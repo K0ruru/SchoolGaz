@@ -4,9 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	auth "server/Auth"
 	"server/db"
 	"strconv"
-  "server/Auth"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -51,10 +52,11 @@ func CreateUser(c *gin.Context) {
     }
 
     // Gunakan password yang di-hash saat memasukkan data ke dalam database
-    _, err = dbConn.Exec("INSERT INTO users (nis, nama, passphrase, email, gender, agama, status) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-        newUser.NIS, newUser.Name, hashedPassword, newUser.Email, newUser.Gender, newUser.Religion, newUser.Status)
+    _, err = dbConn.Exec("INSERT INTO users (nis, nama, passphrase, email, gender, agama) VALUES ($1, $2, $3, $4, $5, $6)",
+        newUser.NIS, newUser.Name, hashedPassword, newUser.Email, newUser.Gender, newUser.Religion)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user",})
+        fmt.Println(err)
         return
     }
 
@@ -209,7 +211,7 @@ func LoginHandler(c *gin.Context) {
     }
 
     // Return token to the client
-    c.JSON(http.StatusOK, gin.H{"token": token})
+    c.JSON(http.StatusOK, gin.H{"token": token, "status": user.Status})
 }
 
 // checkPassword compares the provided password with the hashed password from the database

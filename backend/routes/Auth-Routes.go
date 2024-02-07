@@ -1,8 +1,9 @@
 package routes
 
 import (
-    "github.com/gin-gonic/gin"
-    "server/handlers"
+	"server/handlers"
+
+	"github.com/gin-gonic/gin"
 )
 
 func AuthRoutes(router *gin.Engine) {
