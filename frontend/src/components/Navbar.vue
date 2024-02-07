@@ -1,19 +1,19 @@
 <script setup lang="ts">
-	import { ref } from "vue";
-	import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-	const tabAktif = ref("");
-	const router = useRouter();
+const tabAktif = ref("");
+const router = useRouter();
 
-	const navigasi = (tab: string) => {
-		tabAktif.value = tab;
-		router.push(`/${tab}`);
-	};
+const navigasi = (tab: string) => {
+  tabAktif.value = tab;
+  router.push(`/${tab}`);
+};
 
-	const logout = () => {
-		localStorage.removeItem("token");
-		router.push("/login");
-	};
+const logout = () => {
+  localStorage.removeItem("token");
+  router.push("/login");
+};
 </script>
 
 <template>
@@ -27,12 +27,55 @@
         <a href="#" class="menu-item" :class="{ active: tabAktif === 'tugas' }" @click="navigasi('tugas')">Assignments</a>
       </div>
     </div>
-    <div class="profile-section">PROFILE</div>
+    <!-- <div class="profile-section">PROFILE</div> -->
+    <div class="profile-dropdown">
+      <div class="profile-section">PROFILE</div>
+      <div class="dropdown-content">
+        <a href="#">Profile</a>
+        <a href="#">Settings</a>
+        <a href="#" @click='logout'>Logout</a>
+      </div>
+    </div>
   </div>
 </template>
 
-
 <style scoped>
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-section {
+  background-color: #0000ff;
+  color: #fff;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.profile-dropdown:hover .dropdown-content {
+  display: block;
+}
+
 .header-container {
   align-self: stretch;
   display: flex;
@@ -58,7 +101,9 @@
   margin-top: 8px;
   flex-grow: 1;
   flex-basis: auto;
-  font: 22px Poppins, sans-serif;
+  font:
+    22px Poppins,
+    sans-serif;
 }
 
 .menu-container {
@@ -88,20 +133,20 @@
   justify-content: center;
   gap: 20px;
   /* margin-right: 290px; */
-   position: absolute;
+  position: absolute;
   /* top: 50%; */
   left: 50%;
-  transform: translateX(-50%) ;
+  transform: translateX(-50%);
 }
 
 @media (max-width: 991px) {
   .menu-items {
     white-space: initial;
-  /* margin-right: 290px; */
-   position: absolute;
-  /* top: 50%; */
-  left: 50%;
-  transform: translateX(-50%) translateY(-190%) ;
+    /* margin-right: 290px; */
+    position: absolute;
+    /* top: 50%; */
+    left: 50%;
+    transform: translateX(-50%) translateY(-190%);
   }
 }
 
