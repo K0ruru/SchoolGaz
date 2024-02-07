@@ -91,7 +91,6 @@
 				<tr>
 					<th>NIS</th>
 					<th>Nama</th>
-					<th>Passphrase</th>
 					<th>E-mail</th>
 					<th>No-Telp</th>
 					<th>Jenis Kelamin</th>
@@ -103,14 +102,15 @@
 				<tr v-for="userData in filteredData" :key="userData.nis">
 					<td>{{ userData.nis }}</td>
 					<td>{{ userData.name }}</td>
-					<td>{{ userData.passphrase }}</td>
 					<td>{{ userData.email }}</td>
 					<td>{{ userData.gender }}</td>
 					<td>{{ userData.religion }}</td>
 					<td>{{ userData.status }}</td>
 					<td>
 						<button class="button-edit">Edit</button>
-						<button class="button-delete" @click="hapusData(userData.nis)">Hapus</button>
+						<button class="button-delete" @click="hapusData(userData.nis)">
+							Hapus
+						</button>
 					</td>
 				</tr>
 			</tbody>
@@ -122,48 +122,60 @@
 	table {
 		width: 100%;
 		border-collapse: collapse;
-    margin-top: 50px;
+		margin-top: 50px;
 	}
 
 	th,
 	td {
 		border: 1px solid #ddd;
-		padding: 8px;
-		text-align: left;
+		padding: 20px 8px;
+		text-align: center;
+		border: none;
 	}
 
 	th {
 		background-color: #f2f2f2;
 	}
-  .search {
-    margin-top: 50px;
-  }
 
-  .button-delete {
-    border: none;
-    outline: none;
-    padding: 7px;
-    background-color: #ff0000;
-    color: #fff;
-    margin-left: 10px;
-    border-radius: 4px;
-  }
-  .button-edit {
-    border: none;
-    outline: none;
-    padding: 7px;
-    background-color: #222;
-    color: #fff;
-    border-radius: 4px;
-  }
+	th:first-child {
+		border-top-left-radius: 10px;
+	}
 
-  th {
-    background-color: #0000ff;
-    color: #fff;
-  }
+	th:last-child {
+		border-top-right-radius: 10px;
+	}
 
-  td {
-    border-color: #fff;
-  }
-  tr:nth-child(even) {background-color: #f2f2f2;}
+	.search {
+		margin-top: 50px;
+	}
+
+	.button-delete {
+		border: none;
+		outline: none;
+		padding: 7px;
+		background-color: #ff0000;
+		color: #fff;
+		margin-left: 10px;
+		border-radius: 4px;
+	}
+	.button-edit {
+		border: none;
+		outline: none;
+		padding: 7px;
+		background-color: #222;
+		color: #fff;
+		border-radius: 4px;
+	}
+
+	th {
+		background-color: #0000ff;
+		color: #fff;
+	}
+
+	td {
+		border-color: #fff;
+	}
+	tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
 </style>
