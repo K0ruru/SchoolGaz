@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"server/db"
 	"strconv"
-
+  "server/Auth"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -125,7 +125,27 @@ func GetUsers(c *gin.Context) {
     c.JSON(http.StatusOK, users)
 }
 
+// GetUserByNIS retrieves a user from the database by NIS
+func GetUserByNIS(nis int) (*User, error) {
+    // Query the database to retrieve the user with the specified NIS
+    query := "SELECT nis, nama, passphrase, email, gender, agama, status FROM users WHERE nis = $1"
+    row := dbConn.QueryRow(query, nis)
 
+    // Initialize a User struct to store the result
+    var user User
+    err := row.Scan(&user.NIS, &user.Name, &user.Passphrase, &user.Email, &user.Gender, &user.Religion, &user.Status)
+    if err != nil {
+        // Check if the user is not found
+        if err == sql.ErrNoRows {
+            return nil, nil
+        }
+        // Handle other errors
+        return nil, err
+    }
+
+    // Return the user
+    return &user, nil
+}
 
 // DeleteUser handles the deletion of a user
 func DeleteUser(c *gin.Context) {
@@ -154,4 +174,46 @@ func DeleteUser(c *gin.Context) {
 
 
 
- 
+ // LoginRequest represents the JSON structure of login request
+type LoginRequest struct {
+    NIS        int    `json:"nis" binding:"required"`
+    Passphrase string `json:"passphrase" binding:"required"`
+}
+
+// LoginHandler handles user login
+func LoginHandler(c *gin.Context) {
+    var req LoginRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    // Retrieve user from the database by NIS
+    user, err := GetUserByNIS(req.NIS)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
+        return
+    }
+
+    // Check if user exists and verify password
+    if user == nil || !checkPassword(req.Passphrase, user.Passphrase) {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid NIS or password"})
+        return
+    }
+
+    // Generate JWT token
+    token, err := auth.CreateToken(req.NIS)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+        return
+    }
+
+    // Return token to the client
+    c.JSON(http.StatusOK, gin.H{"token": token})
+}
+
+// checkPassword compares the provided password with the hashed password from the database
+func checkPassword(password string, hashedPassword string) bool {
+    err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+    return err == nil
+}
