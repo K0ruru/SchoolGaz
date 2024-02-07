@@ -1,11 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"server/db"
+	"server/routes"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	db.InitDB()
-  fmt.Println("Initialization complete")
+  
+  router := gin.Default()
+  routes.AuthRoutes(router)
+  
+  router.Run(":8080")
+
 }

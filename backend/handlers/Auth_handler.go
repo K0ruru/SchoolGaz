@@ -1,12 +1,15 @@
 package handlers
 
 import (
-    "database/sql"
-    "net/http"
-    "strconv"
+	"database/sql"
+	"fmt"
+	"net/http"
+	"server/db"
+	"strconv"
 
-    "github.com/gin-gonic/gin"
-    "server/db"
+	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -40,19 +43,64 @@ func CreateUser(c *gin.Context) {
         return
     }
 
-    _, err := dbConn.Exec("INSERT INTO users (nis, name, passphrase, email, gender, religion, status) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-        newUser.NIS, newUser.Name, newUser.Passphrase, newUser.Email, newUser.Gender, newUser.Religion, newUser.Status)
+    
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Passphrase), bcrypt.DefaultCost)
     if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+        return
+    }
+
+    // Gunakan password yang di-hash saat memasukkan data ke dalam database
+    _, err = dbConn.Exec("INSERT INTO users (nis, nama, passphrase, email, gender, agama, status) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        newUser.NIS, newUser.Name, hashedPassword, newUser.Email, newUser.Gender, newUser.Religion, newUser.Status)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user",})
         return
     }
 
     c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
 }
+// Update user handler
+func UpdateUser(c *gin.Context) {
+    // Mendapatkan ID pengguna dari parameter
+    nisStr := c.Param("nis")
+
+    // Memeriksa apakah nilai "nis" ada
+    if nisStr == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
+        return
+    }
+
+    // Memeriksa apakah nilai "nis" adalah bilangan bulat
+    nis, err := strconv.Atoi(nisStr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID format"})
+        return
+    }
+
+    // Mendapatkan data pengguna yang ingin diperbarui dari body permintaan
+    var updateUser User
+    if err := c.ShouldBindJSON(&updateUser); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+        return
+    }
+
+    // Lakukan operasi pembaruan pengguna sesuai dengan kebutuhan aplikasi Anda
+    _, err = dbConn.Exec("UPDATE users SET nama=$1, passphrase=$2, email=$3, gender=$4, agama=$5, status=$6 WHERE nis=$7",
+        updateUser.Name, updateUser.Passphrase, updateUser.Email, updateUser.Gender, updateUser.Religion, updateUser.Status, nis)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+        return
+    }
+
+    // Respon berhasil
+    c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+}
+
 
 // Get all users handler
 func GetUsers(c *gin.Context) {
-    rows, err := dbConn.Query("SELECT nis, name, email, gender, religion, status FROM users")
+    rows, err := dbConn.Query("SELECT nis, nama, email, gender, agama, status FROM users")
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
         return
@@ -70,55 +118,40 @@ func GetUsers(c *gin.Context) {
     }
 
     if err := rows.Err(); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to scan fetch users"})
         return
     }
 
     c.JSON(http.StatusOK, users)
 }
 
-// Update user handler
-func UpdateUser(c *gin.Context) {
-    nisStr := c.Param("nis")
-    nis, err := strconv.Atoi(nisStr)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-        return
-    }
 
-    var updatedUser User
-    if err := c.ShouldBindJSON(&updatedUser); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
 
-    _, err = dbConn.Exec("UPDATE users SET name=$1, passphrase=$2, email=$3, gender=$4, religion=$5, status=$6 WHERE nis=$7",
-        updatedUser.Name, updatedUser.Passphrase, updatedUser.Email, updatedUser.Gender, updatedUser.Religion, updatedUser.Status, nis)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
-        return
-    }
-
-    c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
-}
-
-// Delete user handler
+// DeleteUser handles the deletion of a user
 func DeleteUser(c *gin.Context) {
     nisStr := c.Param("nis")
-    nis, err := strconv.Atoi(nisStr)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+    
+    // Memeriksa apakah nilai "nis" ada
+    if nisStr == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
         return
     }
 
-    _, err = dbConn.Exec("DELETE FROM users WHERE nis=$1", nis)
+    // Memeriksa apakah nilai "nis" adalah bilangan bulat
+    nis, err := strconv.Atoi(nisStr)
     if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID format"})
+        return
+    }
+   _, err = dbConn.Exec("DELETE FROM users WHERE nis=$1", nis)
+      if err != nil {
+         fmt.Println("Failed to delete user: ", err)
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
         return
     }
-
     c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }
+
 
 
  
