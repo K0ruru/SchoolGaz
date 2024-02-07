@@ -82,7 +82,7 @@
 <template>
 	<div class="container">
 		<Navbar />
-		<div>
+		<div class="search">
 			<input v-model="search" placeholder="Search..." />
 			<button @click="tambahData">Tambah</button>
 		</div>
@@ -109,8 +109,8 @@
 					<td>{{ userData.religion }}</td>
 					<td>{{ userData.status }}</td>
 					<td>
-						<button>Edit</button>
-						<button @click="hapusData(userData.nis)">Hapus</button>
+						<button class="button-edit">Edit</button>
+						<button class="button-delete" @click="hapusData(userData.nis)">Hapus</button>
 					</td>
 				</tr>
 			</tbody>
@@ -122,6 +122,7 @@
 	table {
 		width: 100%;
 		border-collapse: collapse;
+    margin-top: 50px;
 	}
 
 	th,
@@ -134,4 +135,35 @@
 	th {
 		background-color: #f2f2f2;
 	}
+  .search {
+    margin-top: 50px;
+  }
+
+  .button-delete {
+    border: none;
+    outline: none;
+    padding: 7px;
+    background-color: #ff0000;
+    color: #fff;
+    margin-left: 10px;
+    border-radius: 4px;
+  }
+  .button-edit {
+    border: none;
+    outline: none;
+    padding: 7px;
+    background-color: #222;
+    color: #fff;
+    border-radius: 4px;
+  }
+
+  th {
+    background-color: #0000ff;
+    color: #fff;
+  }
+
+  td {
+    border-color: #fff;
+  }
+  tr:nth-child(even) {background-color: #f2f2f2;}
 </style>

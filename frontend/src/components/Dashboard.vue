@@ -22,7 +22,7 @@
 		<div class="cont">
 			<div class="box">
 				<div class="content">
-					<div class="icon-1"></div>
+					<div class="icon-1"><ion-icon name="people-outline"></ion-icon></div>
 					<div class="text">
 						<div class="title">Siswa</div>
 						<div class="subtitle">List Siswa</div>
@@ -37,10 +37,10 @@
 
 			<div class="box">
 				<div class="content">
-					<div class="icon-2"></div>
+					<div class="icon-2"><ion-icon name="accessibility-outline"></ion-icon></div>
 					<div class="text">
-						<div class="title">Siswa</div>
-						<div class="subtitle">List Siswa</div>
+						<div class="title">Guru</div>
+						<div class="subtitle">List Guru</div>
 					</div>
 				</div>
 				<div class="line"></div>
@@ -52,10 +52,10 @@
 
 			<div class="box">
 				<div class="content">
-					<div class="icon-3"></div>
+					<div class="icon-3"><ion-icon name="people-outline"></ion-icon></div>
 					<div class="text">
-						<div class="title">Siswa</div>
-						<div class="subtitle">List Siswa</div>
+						<div class="title">Kelas</div>
+						<div class="subtitle">Daftar Kelas</div>
 					</div>
 				</div>
 				<div class="line"></div>
@@ -120,12 +120,15 @@
 	}
 	.box:hover .icon-1 {
 		background-color: #fff;
+    color: #000fff;
 	}
 	.box:hover .icon-2 {
 		background-color: #fff;
+    color: #000fff;
 	}
 	.box:hover .icon-3 {
 		background-color: #fff;
+    color: #000fff;
 	}
 
 	.content {
@@ -137,22 +140,38 @@
 	.icon-1 {
 		border-radius: 8px;
 		background-color: #0000ff;
+    color: white;
 		width: 50px;
 		height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 29px;
 	}
-
 	.icon-2 {
 		border-radius: 8px;
-		background-color: #0044ff;
+		background-color: #0000ff;
+    color: white;
 		width: 50px;
 		height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 29px;
 	}
 	.icon-3 {
 		border-radius: 8px;
-		background-color: #0066ff;
+		background-color: #0000ff;
+    color: white;
 		width: 50px;
 		height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 29px;
 	}
+
+
 
 	.text {
 		display: flex;

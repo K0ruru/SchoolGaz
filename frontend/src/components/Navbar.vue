@@ -19,7 +19,7 @@
 
 <template>
 	<div class="header-container">
-		<div class="brand-logo">SchoolGaz</div>
+		<div class="brand-logo"><img src="../assets/SG_.png" alt="SG"/></div>
 		<div class="menu-container">
 			<div class="menu-items">
 				<a
@@ -126,8 +126,12 @@
 		margin-top: 8px;
 		flex-grow: 1;
 		flex-basis: auto;
-		font: 22px Poppins, sans-serif;
 	}
+
+  .brand-logo img {
+    width: 150px;
+    margin-bottom: 7px;
+  }
 
 	.menu-container {
 		justify-content: center;
@@ -187,6 +191,7 @@
 		border-radius: 3px;
 		border: 1px solid rgba(0, 0, 0, 0.2);
 		padding: 10px 25px;
+    margin-top: 10px;
 	}
 
 	@media (max-width: 991px) {
