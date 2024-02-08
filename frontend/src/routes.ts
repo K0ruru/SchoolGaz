@@ -6,6 +6,7 @@ import Siswa from "./components/Siswa.vue";
 import Guru from "./components/Guru.vue";
 import Signup from "./components/SignupForm.vue";
 import Login from "./components/LoginForm.vue";
+import Profile from "./components/Profile.vue";
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -35,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: "/login",
 		component: Login,
+	},
+	{
+		path: "/profile",
+		component: Profile,
+		meta: { requiresAuth: true },
 	},
 ];
 
