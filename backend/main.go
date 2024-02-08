@@ -18,7 +18,7 @@ func main() {
 	router.Use(cors.New(config))
 
   routes.AuthRoutes(router)
-  
+  routes.GuruRoutes(router)
   router.Run(":8080")
 
 }
