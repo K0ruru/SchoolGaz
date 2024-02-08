@@ -87,10 +87,28 @@ func UpdateUser(c *gin.Context) {
         return
     }
 
-    // Lakukan operasi pembaruan pengguna sesuai dengan kebutuhan aplikasi Anda
-    _, err = dbConn.Exec("UPDATE users SET nama=$1, passphrase=$2, email=$3, gender=$4, agama=$5, status=$6 WHERE nis=$7",
-        updateUser.Name, updateUser.Passphrase, updateUser.Email, updateUser.Gender, updateUser.Religion, updateUser.Status, nis)
+    // Check if a new password is provided in the update request
+    if updateUser.Passphrase != "" {
+        // If a new password is provided, update the password in the database
+        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(updateUser.Passphrase), bcrypt.DefaultCost)
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+            return
+        }
+
+        _, err = dbConn.Exec("UPDATE users SET nama=$1, passphrase=$2, email=$3, gender=$4, agama=$5, status=$6 WHERE nis=$7",
+            updateUser.Name, hashedPassword, updateUser.Email, updateUser.Gender, updateUser.Religion, updateUser.Status, nis)
+
+            fmt.Println(err)
+    } else {
+        // If no new password is provided, update other fields excluding the password
+        _, err = dbConn.Exec("UPDATE users SET nama=$1, email=$2, gender=$3, agama=$4, status=$5 WHERE nis=$6",
+            updateUser.Name, updateUser.Email, updateUser.Gender, updateUser.Religion, updateUser.Status, nis)
+            fmt.Println(err)
+    }
+
     if err != nil {
+        fmt.Println("Error updating user:", err)
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
         return
     }
@@ -98,6 +116,7 @@ func UpdateUser(c *gin.Context) {
     // Respon berhasil
     c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
 }
+
 
 
 // Get all users handler
