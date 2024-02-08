@@ -211,7 +211,7 @@ func LoginHandler(c *gin.Context) {
     }
 
     // Return token to the client
-    c.JSON(http.StatusOK, gin.H{"token": token, "status": user.Status})
+    c.JSON(http.StatusOK, gin.H{"token": token, "status": user.Status, "name": user.Name})
 }
 
 // checkPassword compares the provided password with the hashed password from the database

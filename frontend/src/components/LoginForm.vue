@@ -16,7 +16,7 @@
 				passphrase: pass.value,
 			});
 
-			const { token, status } = response.data;
+			const { token, status, name } = response.data;
 
 			if (status != "active") {
 				alert("Akun anda tidak aktif");
@@ -24,6 +24,7 @@
 			}
 
 			localStorage.setItem("token", token);
+			localStorage.setItem("nama", name);
 
 			router.push("/");
 		} catch (error) {
