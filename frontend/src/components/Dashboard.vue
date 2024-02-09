@@ -163,7 +163,8 @@
 		min-width: 30%;
 		padding: 25px;
 		height: 170px;
-		transition: 0.5s all ease-in-out;
+		transition: 0.3s all ease-in-out;
+		cursor: pointer;
 	}
 
 	.box:hover {
@@ -268,16 +269,19 @@
 		min-width: 70%;
 		display: flex;
 		margin-right: 200px;
+		transition: 0.3s all ease-in-out;
 	}
 
 	.title {
 		color: #222;
 		font-weight: 600;
+		transition: 0.3s all ease-in-out;
 	}
 
 	.subtitle {
 		color: #222;
 		/* color: rgba(255, 255, 255, 0.8); */
+		transition: 0.3s all ease-in-out;
 	}
 
 	.line {
@@ -286,6 +290,7 @@
 		margin-top: 20px;
 		margin-bottom: 20px;
 		height: 1px;
+		transition: 0.3s all ease-in-out;
 	}
 
 	.info {
@@ -296,6 +301,7 @@
 		color: #fff;
 		font-weight: 600;
 		white-space: nowrap;
+		transition: 0.3s all ease-in-out;
 	}
 
 	.value {
@@ -308,6 +314,7 @@
 		justify-content: center;
 		padding: 5px 14px;
 		font: 12px Poppins, sans-serif;
+		transition: 0.3s all ease-in-out;
 	}
 
 	.red {

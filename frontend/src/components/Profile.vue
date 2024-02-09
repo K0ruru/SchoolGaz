@@ -1,5 +1,15 @@
 <script setup lang="ts">
 	import Navbar from "./Navbar.vue";
+	import { ref } from "vue";
+	import { useRouter } from "vue-router";
+
+	const tabAktif = ref("");
+	const router = useRouter();
+
+	const navigasi = (tab: string) => {
+		tabAktif.value = tab;
+		router.push(`/${tab}`);
+	};
 </script>
 
 <template>
@@ -37,7 +47,7 @@
 			<div class="tugas-container">
 				<div class="belum-selesai">
 					<h2>Segera Kerjakan!</h2>
-					<div class="tugas-card">
+					<div class="tugas-card" @click="navigasi('tugas')">
 						<div class="tugas-info">
 							<h4>Matematika</h4>
 							<h3>Fungsi CIN, COS, TAN</h3>

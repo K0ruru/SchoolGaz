@@ -40,8 +40,8 @@
 				showCancelButton: true,
 				confirmButtonText: "Yes, delete it!",
 				cancelButtonText: "Cancel",
+				confirmButtonColor: "#ff0000",
 			});
-
 			if (result.isConfirmed) {
 				const response = await fetch(
 					`http://localhost:8080/Auth/delete/${nis}`,
