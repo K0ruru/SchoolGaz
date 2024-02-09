@@ -7,6 +7,7 @@ import (
 	auth "server/Auth"
 	"server/db"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -20,7 +21,11 @@ type User struct {
     Email      string `json:"email"`
     Gender     string `json:"gender"`
     Religion   string `json:"religion"`
+    Profilepicture string `json:"profilepicture"`
     Status     string `json:"status"`
+    Role       string `json:"role"`
+    Kelas      int    `json:"kelas"`
+    Mapel      int    `json:"mapel"`
 }
 
 var dbConn *sql.DB
@@ -80,26 +85,67 @@ func UpdateUser(c *gin.Context) {
         return
     }
 
-    // Mendapatkan data pengguna yang ingin diperbarui dari body permintaan
-    var updateUser User
-    if err := c.ShouldBindJSON(&updateUser); err != nil {
+    // Mendapatkan data entitas yang ingin diperbarui dari body permintaan
+    var updateData map[string]interface{}
+    if err := c.ShouldBindJSON(&updateData); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+        fmt.Println(err)
         return
     }
 
-    // Lakukan operasi pembaruan pengguna sesuai dengan kebutuhan aplikasi Anda
-    _, err = dbConn.Exec("UPDATE users SET nama=$1, passphrase=$2, email=$3, gender=$4, agama=$5, status=$6 WHERE nis=$7",
-        updateUser.Name, updateUser.Passphrase, updateUser.Email, updateUser.Gender, updateUser.Religion, updateUser.Status, nis)
+    // Memeriksa apakah entitas yang ingin diperbarui ada dalam daftar entitas yang diperbolehkan
+    allowedEntities := map[string]bool{"name": true, "passphrase": true, "email": true, "gender": true, "religion": true, "profilepicture": true, "status": true, "role": true, "kelas": true, "mapel": true}
+    for key := range updateData {
+        if _, ok := allowedEntities[key]; !ok {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid entity to update"})
+            return
+        }
+    }
+
+    // Jika passphrase diperbarui, hash passphrase baru
+    if newPassword, ok := updateData["passphrase"]; ok {
+        newPass, ok := newPassword.(string)
+        if !ok {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid passphrase format"})
+            return
+        }
+        if newPass != "" {
+            hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPass), bcrypt.DefaultCost)
+            if err != nil {
+                c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+                return
+            }
+            updateData["passphrase"] = string(hashedPassword)
+        }
+    }
+
+    // Menyiapkan query pembaruan
+    query := "UPDATE users SET"
+    var values []interface{}
+    i := 1
+    for key, value := range updateData {
+        query += " " + key + "=$" + strconv.Itoa(i) + ","
+        values = append(values, value)
+        i++
+    }
+    // Menghapus koma ekstra di akhir query
+    query = strings.TrimSuffix(query, ",")
+
+    // Menambahkan kondisi WHERE
+    query += " WHERE nis=$" + strconv.Itoa(i)
+    values = append(values, nis)
+
+    // Melakukan operasi pembaruan pengguna
+    _, err = dbConn.Exec(query, values...)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+        fmt.Println(err)
         return
     }
 
     // Respon berhasil
     c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
 }
-
-
 // Get all users handler
 func GetUsers(c *gin.Context) {
     rows, err := dbConn.Query("SELECT nis, nama, email, gender, agama, status FROM users")
