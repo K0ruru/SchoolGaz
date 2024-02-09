@@ -7,8 +7,15 @@ import (
     "fmt"
     "os"
 
+<<<<<<< Updated upstream
     "github.com/joho/godotenv"
+=======
+	"github.com/joho/godotenv"
+	"gorm.io/gorm"
+>>>>>>> Stashed changes
 )
+
+var DB *gorm.DB
 
 func init() {
     if err := godotenv.Load(); err != nil {
