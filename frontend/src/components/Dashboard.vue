@@ -69,7 +69,7 @@
 			<!-- box untuk kelas -->
 			<div class="box" @click="navigasi('kelas')">
 				<div class="content">
-					<div class="icon-3"><ion-icon name="people-outline"></ion-icon></div>
+					<div class="icon-3"><ion-icon name="school"></ion-icon></div>
 					<div class="text">
 						<div class="title">Kelas</div>
 						<div class="subtitle">Daftar Kelas</div>
