@@ -25,7 +25,9 @@ func main() {
 	})
 
   routes.AuthRoutes(router)
-  
+  routes.KelasRoutes(router)
+  routes.MapelRoutes(router)
+
   router.Run(":8080")
 
 }
