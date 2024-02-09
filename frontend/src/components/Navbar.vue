@@ -37,7 +37,7 @@
 		<div class="profile-dropdown">
 			<div class="profile-section">PROFILE</div>
 			<div class="dropdown-content">
-				<a href="#">Profile</a>
+				<a href="#" @click="navigasi('profile')">Profile</a>
 				<a href="#">Settings</a>
 				<a href="#" @click="logout">Logout</a>
 			</div>
@@ -111,6 +111,7 @@
 		margin-top: 8px;
 		flex-grow: 1;
 		flex-basis: auto;
+		cursor: pointer;
 	}
 
 	.brand-logo img {
