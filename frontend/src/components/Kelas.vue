@@ -1,14 +1,13 @@
 <script setup lang="ts">
-	import Navbar from "./Navbar.vue";
+import Navbar from "./Navbar.vue";
 </script>
 
+
 <template>
-	<Navbar />
-	<div class="container">
-		<div class="kelas-content">
-			<h1>HEHE HEHA</h1>
-		</div>
-	</div>
+  <div class="container">
+    <Navbar />
+    <h1>hehe</h1>
+  </div>
 </template>
 
-<style scoped></style>
+
