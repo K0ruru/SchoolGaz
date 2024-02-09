@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"server/db"
 	"server/routes"
 
@@ -16,6 +17,12 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:7070"} // Add the origins that are allowed to make requests
 	router.Use(cors.New(config))
+
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Hello, World!",
+		})
+	})
 
   routes.AuthRoutes(router)
   

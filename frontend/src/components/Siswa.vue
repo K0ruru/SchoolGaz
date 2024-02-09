@@ -31,10 +31,6 @@
 		fetchData();
 	});
 
-	const tambahData = () => {
-		// Logic for adding data
-	};
-
 	const hapusData = async (nis: number) => {
 		try {
 			const result = await Swal.fire({
@@ -73,10 +69,21 @@
 		}
 	};
 
+	const filterKey = ref("name");
+
 	const filteredData = computed(() => {
-		return data.value.filter((userData) =>
-			userData.name.toLowerCase().includes(search.value.toLowerCase())
-		);
+		return data.value.filter((userData) => {
+			const key = filterKey.value;
+			if (
+				Object.prototype.hasOwnProperty.call(userData, key) &&
+				typeof userData[key as keyof typeof userData] === "string"
+			) {
+				return (userData[key as keyof typeof userData] as string)
+					.toLowerCase()
+					.includes(search.value.toLowerCase());
+			}
+			return false;
+		});
 	});
 
 	const editFormVisible = ref(false);
@@ -103,7 +110,17 @@
 		<Navbar />
 		<div class="search">
 			<input v-model="search" placeholder="Search..." class="input-search" />
-			<button @click="tambahData" class="button-add">Tambah</button>
+			<div class="filter-dropdown">
+				<label for="filterKey">Filter by:</label>
+				<select v-model="filterKey" id="filterKey">
+					<option value="nis">NIS</option>
+					<option value="name">Name</option>
+					<option value="email">E-mail</option>
+					<option value="gender">Jenis Kelamin</option>
+					<option value="religion">Agama</option>
+					<option value="status">Status</option>
+				</select>
+			</div>
 		</div>
 		<table>
 			<thead>

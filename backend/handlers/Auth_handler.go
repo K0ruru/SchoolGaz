@@ -104,7 +104,7 @@ func UpdateUser(c *gin.Context) {
         // If no new password is provided, update other fields excluding the password
         _, err = dbConn.Exec("UPDATE users SET nama=$1, email=$2, gender=$3, agama=$4, status=$5 WHERE nis=$6",
             updateUser.Name, updateUser.Email, updateUser.Gender, updateUser.Religion, updateUser.Status, nis)
-            fmt.Println(err)
+            fmt.Println(err) 
     }
 
     if err != nil {
