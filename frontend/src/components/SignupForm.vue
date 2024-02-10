@@ -101,6 +101,7 @@ const signUp = async () => {
       <button class="button" type="submit">Sign-Up</button>
       <p>Sudah punya akun? <router-link to="/login">Login</router-link></p>
     </form>
+    <img src="../assets/vector.png" alt="" class="vector">
   </div>
 </template>
 
@@ -148,6 +149,18 @@ form {
 .form-input input:focus::placeholder {
   color: #ccc;
 }
+
+form {
+  width: 30%;
+}
+
+.container-center {
+  gap: 5rem;
+}
+
+  .vector {
+    width: 50%;
+  }
 
 .button {
   font-family: Poppins, sans-serif;
