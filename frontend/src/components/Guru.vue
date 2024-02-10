@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Navbar from "./Navbar.vue";
 import Swal from "sweetalert2";
+import Navbar from "./Navbar.vue";
 import { ref, onMounted, computed } from "vue";
 
 interface UserData {
@@ -15,6 +15,7 @@ interface UserData {
 
 const search = ref("");
 const data = ref<Array<UserData>>([]);
+
 
 const fetchData = async () => {
   try {
