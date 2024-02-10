@@ -21,7 +21,7 @@ type User struct {
     Email      string `json:"email"`
     Gender     string `json:"gender"`
     Religion   string `json:"religion"`
-    Profilepicture string `json:"profilepicture"`
+    Profilepicture sql.NullString `json:"profilepicture"`
     Status     string `json:"status"`
     Role       string `json:"role"`
     Kelas      int    `json:"kelas"`
@@ -265,4 +265,51 @@ func LoginHandler(c *gin.Context) {
 func checkPassword(password string, hashedPassword string) bool {
     err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
     return err == nil
+}
+
+
+func GetSiswaFromKelas(c *gin.Context) {
+    kelasStr := c.Param("kelas")
+
+    // cek id kelasnya
+    if kelasStr == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Kelas ID is required"})
+        return
+    }
+
+    // ubah id nya tadi jadi int
+    kelas, err := strconv.Atoi(kelasStr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Kelas ID format"})
+        fmt.Println(err)
+        return
+    }
+
+    // querry untuk ngambil semua siswa yang kelasnya sama
+    rows, err := dbConn.Query("SELECT nis, nama, email, profilepicture, gender FROM users WHERE role='User' AND kelas=$1", kelas)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+        fmt.Println(err)
+        return
+    }
+    defer rows.Close()
+
+    var users []User
+    for rows.Next() {
+        var user User
+        if err := rows.Scan(&user.NIS, &user.Name, &user.Email, &user.Profilepicture, &user.Gender); err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to scan users"})
+            fmt.Println(err)
+            return
+        }
+        users = append(users, user)
+    }
+
+    if err := rows.Err(); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+        fmt.Println(err)
+        return
+    }
+
+    c.JSON(http.StatusOK, users)
 }

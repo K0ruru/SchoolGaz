@@ -2,6 +2,7 @@
 	import { ref, defineProps, defineEmits } from "vue";
 	import axios from "axios";
 	import Swal from "sweetalert2";
+  // kontolk
 
 	const { userData } = defineProps(["userData"]);
 	const emits = defineEmits(["closeEditForm"]);
@@ -54,9 +55,11 @@
 <template>
 	<div class="edit-form-overlay">
 		<div class="edit-form-container">
-			<button class="close-button" @click="emits('closeEditForm')">X</button>
-			<form @submit.prevent="saveChanges">
+      <div class="headd">
 				<h1>Edit Profile</h1>
+			<button class="close-button" @click="emits('closeEditForm')">X</button>
+      </div>
+			<form @submit.prevent="saveChanges">
 				<div class="form-inputs">
 					<div class="form-input">
 						<label for="nis">NIS :</label>
@@ -182,4 +185,31 @@
 		margin-bottom: 10px;
 		cursor: pointer;
 	}
+  label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+  .headd {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .close-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 200px;
+  }
+
 </style>
