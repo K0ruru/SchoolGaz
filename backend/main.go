@@ -11,11 +11,11 @@ import (
 
 func main() {
 	db.InitDB()
-  
-  router := gin.Default()
+
+	router := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:7070"} // Add the origins that are allowed to make requests
+	config.AllowOrigins = []string{"http://localhost:7070"}
 	router.Use(cors.New(config))
 
 	router.GET("/", func(c *gin.Context) {
@@ -24,10 +24,9 @@ func main() {
 		})
 	})
 
-  routes.AuthRoutes(router)
-  routes.KelasRoutes(router)
-  routes.MapelRoutes(router)
+	routes.AuthRoutes(router)
+	routes.KelasRoutes(router)
+	routes.MapelRoutes(router)
 
-  router.Run(":8080")
-
+	router.Run(":8080")
 }
