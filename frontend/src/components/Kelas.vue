@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import Navbar from "./Navbar.vue";
 	import axios from "axios";
-	import { ref, onMounted } from "vue";
+	import { ref } from "vue";
 
 	interface Kelas {
 		id_kelas: number;
@@ -12,21 +12,14 @@
 
 	const kelasData = ref<Kelas[]>([]);
 
-	onMounted(() => {
-		axios
-			.get("http://localhost:8080/kelas/show", {
-				headers: {
-					"Access-Control-Allow-Origin": "http://localhost:7070", // Make sure to replace with your frontend URL
-					"Content-Type": "application/json",
-				},
-			})
-			.then((response) => {
-				kelasData.value = response.data;
-			})
-			.catch((error) => {
-				console.error("Error fetching kelas data:", error);
-			});
-	});
+	axios
+		.get("http://localhost:8080/kelas/")
+		.then((response) => {
+			kelasData.value = response.data;
+		})
+		.catch((error) => {
+			console.error("Error fetching kelas data:", error);
+		});
 </script>
 
 <template>
@@ -57,13 +50,14 @@
 	}
 
 	.kelas-card {
-		box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.3);
+		box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.2);
 		display: flex;
 		flex-direction: column;
 		height: 168px;
 		border-radius: 7px;
 		margin: 30px 45px;
 		transition: 0.3s all ease-in-out;
+		width: 310px;
 	}
 
 	.kelas-card-content {
