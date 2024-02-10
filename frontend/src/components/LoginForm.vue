@@ -51,6 +51,7 @@
 			<button class="button" type="submit">Log-in</button>
 			<p>Belum punya akun? <router-link to="/signup">Sign-up</router-link></p>
 		</form>
+    <img src="../assets/vector.png" alt="" class="vector">
 	</div>
 </template>
 
@@ -104,6 +105,18 @@
 		margin-top: 10px;
 		margin-bottom: 10px;
 	}
+
+  .container-center {
+    gap: 5rem;
+  }
+
+  form {
+    width: 30%;
+  }
+
+  .vector {
+    width: 50%;
+  }
 
 	@media (max-width: 991px) {
 		.button {

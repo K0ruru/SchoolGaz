@@ -90,7 +90,7 @@
 		justify-content: center;
 		align-items: center;
 		width: 30%;
-		background-color: rgb(238, 238, 238);
+		/* background-color: rgb(238, 238, 238); */
 		box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.1);
 		border-radius: 7px;
 		padding: 20px;
@@ -134,7 +134,7 @@
 		padding: 15px;
 		border-radius: 7px;
 		max-width: 100%;
-		background-color: rgb(238, 238, 238);
+		/* background-color: rgb(238, 238, 238); */
 		box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.1);
 		transition: 0.3s all ease-in-out;
 	}
