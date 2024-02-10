@@ -157,3 +157,5 @@ func DeleteKelas(c *gin.Context) {
 
     c.JSON(http.StatusOK, gin.H{"message": "Kelas deleted successfully"})
 }
+
+

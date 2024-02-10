@@ -1,5 +1,35 @@
 <script setup lang="ts">
 	import Navbar from "./Navbar.vue";
+	import { ref, onMounted } from "vue";
+	import axios from "axios";
+	import { useRoute } from "vue-router";
+
+	interface Siswa {
+		nis: number;
+		name: string;
+		profilepicture: string;
+		email: string;
+		gender: string;
+	}
+
+	const siswaData = ref<Siswa[]>([]);
+	const route = useRoute();
+
+	onMounted(async () => {
+		// Get kelas ID from the route parameter
+		const kelasId = route.params.id;
+
+		try {
+			// Fetch data from the API using Axios
+			const response = await axios.get(
+				`http://localhost:8080/Auth/siswa/${kelasId}`
+			);
+			// Update the siswaData with the received data
+			siswaData.value = response.data;
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	});
 </script>
 
 <template>
@@ -51,13 +81,23 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>1</td>
-							<td><img src="../assets/Doge hehe.jpg" alt="" /></td>
-							<td>Nurfaiz Muhammad Qalbi</td>
-							<td>001002003</td>
-							<td>nurfaizqalbi@gmail.com</td>
-							<td>Pria</td>
+						<tr v-for="(siswa, index) in siswaData" :key="index">
+							<td>{{ index + 1 }}</td>
+							<!-- Use a conditional check for profile_picture -->
+							<td>
+								<img
+									:src="
+										siswa.profilepicture !== ''
+											? siswa.profilepicture
+											: require('../assets/Doge hehe.jpg')
+									"
+									alt=""
+								/>
+							</td>
+							<td>{{ siswa.name }}</td>
+							<td>{{ siswa.nis }}</td>
+							<td>{{ siswa.email }}</td>
+							<td>{{ siswa.gender }}</td>
 						</tr>
 					</tbody>
 				</table>

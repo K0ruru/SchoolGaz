@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecord } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 import Dashboard from "./components/Dashboard.vue";
 import KelasList from "./components/KelasList.vue";
@@ -10,7 +10,7 @@ import Login from "./components/LoginForm.vue";
 import Profile from "./components/Profile.vue";
 import Tugas from "./components/Tugas.vue";
 
-const routes: Array<RouteRecord> = [
+const routes: Array<RouteRecordRaw> = [
 	{
 		path: "/",
 		component: Dashboard,
