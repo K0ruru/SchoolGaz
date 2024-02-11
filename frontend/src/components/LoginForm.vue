@@ -16,13 +16,14 @@
 				passphrase: pass.value,
 			});
 
-			const { token, status, name } = response.data;
+			const { token, status, name, role } = response.data;
 
 			if (status != "active") {
 				alert("Akun anda tidak aktif");
 				return;
 			}
 
+      localStorage.setItem("role", role)
 			localStorage.setItem("token", token);
 			localStorage.setItem("nama", name);
 
@@ -111,7 +112,7 @@
   }
 
   form {
-    width: 30%;
+    width: 20%;
   }
 
   .vector {

@@ -12,6 +12,7 @@ const navigasi = (tab: string) => {
 };
 
 const username = localStorage.getItem("nama");
+const role = localStorage.getItem("role");
 </script>
 
 <template>
@@ -31,9 +32,9 @@ const username = localStorage.getItem("nama");
 
     <div class="cont">
       <!-- box untuk siswa -->
-      <div class="box" @click="navigasi('siswa')">
+      <div v-if="role==='User'"  class="box" @click="navigasi('siswa')">
         <div class="content">
-          <div class="icon-1"><ion-icon name="people-outline"></ion-icon></div>
+          <div class="icon-1"><ion-icon name="people"></ion-icon></div>
           <div class="text">
             <div class="title">Siswa</div>
             <div class="subtitle">List Siswa</div>
@@ -51,7 +52,7 @@ const username = localStorage.getItem("nama");
       <div class="box" @click="navigasi('guru')">
         <div class="content">
           <div class="icon-2">
-            <ion-icon name="accessibility-outline"></ion-icon>
+            <ion-icon name="accessibility"></ion-icon>
           </div>
           <div class="text">
             <div class="title">Guru</div>
@@ -84,12 +85,12 @@ const username = localStorage.getItem("nama");
         </div>
       </div>
       <!-- box 4 -->
-      <div class="box" @click="navigasi('kelas')">
+      <div class="box" @click="navigasi('addtugas')">
         <div class="content">
-          <div class="icon-3"><ion-icon name="people-outline"></ion-icon></div>
+          <div class="icon-3"><ion-icon name="book"></ion-icon></div>
           <div class="text">
-            <div class="title">Kelas</div>
-            <div class="subtitle">Daftar Kelas</div>
+            <div class="title">Tugas</div>
+            <div class="subtitle">Tugas</div>
           </div>
         </div>
         <div class="line"></div>
