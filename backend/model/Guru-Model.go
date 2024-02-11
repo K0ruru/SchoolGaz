@@ -11,7 +11,7 @@ type Guru struct {
     Gender         string `gorm:"type:varchar(25)"`
     Religion       string `gorm:"type:varchar(25)"`
     ProfilePicture string `gorm:"type:varchar(50)"`
-  Role           Level  `gorm:"type:role"`
+    Role           Level  `gorm:"type:role"`
 }
 
 
