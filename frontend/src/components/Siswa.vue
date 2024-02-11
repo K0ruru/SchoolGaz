@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Navbar from "./Navbar.vue";
 import Swal from "sweetalert2";
+import EditForm from "./EditForm.vue";
 import { ref, onMounted, computed } from "vue";
 
 interface UserData {
@@ -30,10 +31,6 @@ onMounted(() => {
   fetchData();
 });
 
-const tambahData = () => {
-  // Logic for adding data
-};
-
 const hapusData = async (nis: number) => {
   try {
     const result = await Swal.fire({
@@ -43,8 +40,8 @@ const hapusData = async (nis: number) => {
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
+      confirmButtonColor: "#ff0000",
     });
-
     if (result.isConfirmed) {
       const response = await fetch(`http://localhost:8080/Auth/delete/${nis}`, {
         method: "DELETE",
@@ -69,19 +66,54 @@ const hapusData = async (nis: number) => {
   }
 };
 
+const filterKey = ref("name");
+
 const filteredData = computed(() => {
-  return data.value.filter((userData) =>
-    userData.name.toLowerCase().includes(search.value.toLowerCase()),
-  );
+  return data.value.filter((userData) => {
+    const key = filterKey.value;
+    if (
+      Object.prototype.hasOwnProperty.call(userData, key) &&
+      typeof userData[key as keyof typeof userData] === "string"
+    ) {
+      return (userData[key as keyof typeof userData] as string)
+        .toLowerCase()
+        .includes(search.value.toLowerCase());
+    }
+    return false;
+  });
 });
+
+const editFormVisible = ref(false);
+const selectedUserData = ref<UserData | null>(null);
+
+const showEditForm = (userData: UserData) => {
+  // Assigning a new object to selectedUserData to ensure reactivity
+  selectedUserData.value = { ...userData };
+  editFormVisible.value = true;
+};
+
+const closeEditForm = () => {
+  editFormVisible.value = false;
+};
 </script>
 
 <template>
+  <EditForm v-if="editFormVisible" :userData="selectedUserData" @closeEditForm="closeEditForm" />
   <div class="container">
     <Navbar />
     <div class="search">
       <input v-model="search" placeholder="Search..." class="input-search" />
-      <button @click="tambahData" class="button-add">Tambah</button>
+      <div class="filter-dropdown">
+        <label for="filterKey">Filter by:</label>
+        <select v-model="filterKey" id="filterKey">
+          <option value="nis">NIS</option>
+          <option value="name">Name</option>
+          <option value="email">E-mail</option>
+          <option value="gender">Jenis Kelamin</option>
+          <option value="religion">Agama</option>
+          <option value="status">Status</option>
+        </select>
+      </div>
     </div>
     <table>
       <thead>
@@ -89,9 +121,9 @@ const filteredData = computed(() => {
           <th>NIS</th>
           <th>Nama</th>
           <th>E-mail</th>
-          <th>No-Telp</th>
           <th>Jenis Kelamin</th>
           <th>Agama</th>
+          <th>Status</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -104,7 +136,9 @@ const filteredData = computed(() => {
           <td>{{ userData.religion }}</td>
           <td>{{ userData.status }}</td>
           <td>
-            <button class="button-edit">Edit</button>
+            <button class="button-edit" @click="showEditForm(userData)">
+              Edit
+            </button>
             <button class="button-delete" @click="hapusData(userData.nis)">
               Hapus
             </button>
@@ -191,4 +225,22 @@ td {
 
 tr:nth-child(even) {
   background-color: #f2f2f2;
-}</style>
+}
+
+label {
+  display: block;
+  margin-top: 3px;
+  margin-bottom: 2px;
+  font-size: 12px;
+}
+
+select {
+  width: 100xp;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 15px;
+  cursor: pointer;
+}
+</style>

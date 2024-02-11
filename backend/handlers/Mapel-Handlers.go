@@ -1,5 +1,5 @@
 package handlers
-
+/*
 import (
 	"fmt"
 	"net/http"
@@ -119,3 +119,4 @@ func DeleteMapel(c *gin.Context) {
     }
     c.JSON(http.StatusOK, gin.H{"message": "mapel deleted successfully"})
 }
+*/

@@ -3,120 +3,155 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"strconv"
+	"server/model"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Kelas struct{
-  ID          int       `json:"id_kelas"`
-  Siswa       int    `json:"siswa"`
-  Walas       int        `json:"walas"`
-  Nama_kelas  string    `json:"nama_kelas"`
+
+
+
+
+func GetAllKelas(c *gin.Context) {
+    var kelases []model.Kelas
+
+    // Retrieve all Kelas with their associated Guru
+    if err := dbConn.Preload("Walas").Find(&kelases).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, kelases)
 }
 
-func Createkelas(c * gin.Context){
-  var newKelas Kelas
-  if err := c.ShouldBindJSON(&newKelas); err != nil{
-    c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
-    fmt.Println(err)
-  } 
-  _, err := dbConn.Exec("INSERT INTO kelas (siswa, walas, nama_kelas) VALUES ($1,$2,$3)",
-     newKelas.Siswa, newKelas.Walas, newKelas.Nama_kelas)
-    if err != nil{
-        c.JSON(http.StatusBadRequest, gin.H{"error": " salah insert keknya bang"})
-        fmt.Println(err)
-        return
-    }
-  c.JSON(http.StatusCreated, gin.H{"error": "Kelas Created Succes"})
-}
-// Update user handler
-func Updatekelas(c *gin.Context) {
-    // Mendapatkan ID pengguna dari parameter
-    id_kelas := c.Param("id_kelas")
+func CreateKelas(c *gin.Context) {
+    var NewKelas model.Kelas
 
-    // Memeriksa apakah nilai "nis" ada
-    if id_kelas == "" {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "kelas ID is required"})
+    // Bind JSON body to Kelas struct
+    if err := c.ShouldBindJSON(&NewKelas); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
-    // Memeriksa apakah nilai "nis" adalah bilangan bulat
-    ID, err := strconv.Atoi(id_kelas)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid kelas ID format"})
-        return
-    }
-
-    // Mendapatkan data pengguna yang ingin diperbarui dari body permintaan
-    var UpdateKelas Kelas
-    if err := c.ShouldBindJSON(&UpdateKelas); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+    // Create new record in the database
+    if err := dbConn.Create(&NewKelas).Error; err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         fmt.Println(err)
         return
     }
 
-    // Lakukan operasi pembaruan pengguna sesuai dengan kebutuhan aplikasi Anda
-    _, err = dbConn.Exec("UPDATE kelas SET siswa=$1, walas=$2, nama_kelas=$3  WHERE id_kelas=$4",
-    UpdateKelas.Siswa,UpdateKelas.Walas,UpdateKelas.Nama_kelas, ID) 
-  
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update kelas"})
-        fmt.Println(err)
-        return
-    }
-
-    // Respon berhasil
-    c.JSON(http.StatusOK, gin.H{"message": "kelas updated successfully"})
+    // Respond with the newly created Kelas
+    c.JSON(http.StatusOK, NewKelas)
 }
-// Get all users handler
-func Getkelas(c *gin.Context) {
-    rows, err := dbConn.Query("SELECT id_kelas, siswa, walas, nama_kelas FROM kelas")
+/*
+func GetKelas(c *gin.Context) {
+    id := c.Param("id") // ambil id nya dari url 
+
+    //cek kalau id nya ada
+    kelasID, err := strconv.Atoi(id)
     if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch kelas"})
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id_kelas"})
         return
     }
-    defer rows.Close()
 
-    var kelass []Kelas
-    for rows.Next() {
-        var kelas Kelas
-        if err := rows.Scan(&kelas.ID, &kelas.Siswa,&kelas.Walas, &kelas.Nama_kelas); err != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to scan users"})
-            fmt.Println(err)
+    row := dbConn.QueryRow("SELECT kelas.*, users.nama FROM kelas JOIN users ON kelas.walas = users.nis WHERE kelas.id_kelas = $1", kelasID)
+
+    var kelas Kelas
+
+    err = row.Scan(&kelas.ID, &kelas.Walas, &kelas.Nama_kelas, &kelas.NamaWalas)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            c.JSON(http.StatusNotFound, gin.H{"error": "Kelas not found"})
             return
         }
-        kelass = append(kelass, kelas)
-    }
-
-    if err := rows.Err(); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to scan fetch users"})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get kelas"})
+        fmt.Println(err)
         return
     }
 
-    c.JSON(http.StatusOK, kelass)
+    c.JSON(http.StatusOK, kelas)
 }
-// DeleteUser handles the deletion of a user
-func DeleteKelas(c *gin.Context) {
-    ID := c.Param("id_kelas")
-    
-    // Memeriksa apakah nilai "nis" ada
-    if ID == "" {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "kelas ID is required"})
-        return
+
+func CreateKelas(c *gin.Context) {
+    var kelasBaru Kelas
+
+    if err := c.ShouldBindJSON(&kelasBaru); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        fmt.Println(err)
     }
 
-    // Memeriksa apakah nilai "nis" adalah bilangan bulat
-    id_kelas, err := strconv.Atoi(ID)
+    _, err := dbConn.Exec("INSERT INTO kelas(walas, nama_kelas) VALUES ($1, $2)", kelasBaru.Walas, kelasBaru.Nama_kelas)
     if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID format"})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        fmt.Println(err)
         return
     }
-   _, err = dbConn.Exec("DELETE FROM kelas WHERE id_kelas=$1", id_kelas)
-      if err != nil {
-         fmt.Println("Failed to delete kelas: ", err)
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete kelas"})
-        return
-    }
-    c.JSON(http.StatusOK, gin.H{"message": "kelas deleted successfully"})
+
+    c.JSON(http.StatusCreated, kelasBaru)
 }
+
+func EditKelas(c *gin.Context) {
+    id := c.Param("id")
+
+    //cek id nya
+    kelasID, err := strconv.Atoi(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id_kelas"})
+        return
+    }
+
+    // ambil data kelasnya yang lama
+    existingKelas := Kelas{}
+    err = dbConn.QueryRow("SELECT id_kelas, walas, nama_kelas FROM kelas WHERE id_kelas = $1", kelasID).
+        Scan(&existingKelas.ID, &existingKelas.Walas, &existingKelas.Nama_kelas)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            c.JSON(http.StatusNotFound, gin.H{"error": "Kelas not found"})
+            return
+        }
+    c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get kelas"})
+    fmt.Println(err)
+    return
+}
+
+    // Bind data jsonnya ke struct
+    if err := c.ShouldBindJSON(&existingKelas); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        fmt.Println(err)
+        return
+    }
+
+    // execute updatenya dengan data yang ka ganti aman aman aja
+    _, err = dbConn.Exec("UPDATE kelas SET walas=$1, nama_kelas=$2 WHERE id_kelas=$3", existingKelas.Walas, existingKelas.Nama_kelas, kelasID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        fmt.Println(err)
+        return
+    }
+
+    existingKelas.ID = kelasID
+    c.JSON(http.StatusOK, existingKelas)
+}
+
+func DeleteKelas(c *gin.Context) {
+    id := c.Param("id")
+
+
+    kelasID, err := strconv.Atoi(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id_kelas"})
+        return
+    }
+
+
+    _, err = dbConn.Exec("DELETE FROM kelas WHERE id_kelas = $1", kelasID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete kelas"})
+        fmt.Println(err)
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Kelas deleted successfully"})
+}
+
+*/
