@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	auth "server/Auth"
 	"server/db"
 	"strconv"
 	"strings"
@@ -227,12 +228,11 @@ type LoginRequest struct {
 }
 
 // LoginHandler handles user login
-// LoginHandler handles user login
 func LoginHandler(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 	}
 
 	// Retrieve user from the database by NIS
@@ -243,24 +243,31 @@ func LoginHandler(c *gin.Context) {
 	var user User
 	err := row.Scan(&user.NIS, &user.Name, &user.Passphrase, &user.Email, &user.Gender, &user.Religion, &user.Status, &user.Role)
 	if err != nil {
-		// Check if the user is not found
-		if err == sql.ErrNoRows {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid NIS or password"})
+			// Check if the user is not found
+			if err == sql.ErrNoRows {
+					c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid NIS or password"})
+					return
+			}
+			// Handle other errors
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
 			return
-		}
-		// Handle other errors
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
-		return
 	}
 
 	// Check if user exists and verify password
 	if !checkPassword(req.Passphrase, user.Passphrase) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid NIS or password"})
-		return
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid NIS or password"})
+			return
 	}
 
-    // Return token and user details to the client
-    c.JSON(http.StatusOK, gin.H{"token": token, "status": user.Status, "name": user.Name, "role": user.Role})
+	// Generate JWT token
+	token, err := auth.CreateToken(req.NIS)
+	if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+			return
+	}
+
+	// Return token and user details to the client
+	c.JSON(http.StatusOK, gin.H{"token": token, "status": user.Status, "name": user.Name, "role": user.Role})
 }
 
 
