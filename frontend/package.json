@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ionic/cli": "^7.1.5",
+    "@ionic/vue": "^7.7.1",
     "@vueuse/core": "^10.7.2",
     "axios": "^1.6.7",
     "ionicons": "^7.2.2",

@@ -23,6 +23,7 @@
 				return;
 			}
 
+			localStorage.setItem("role", role);
 			localStorage.setItem("token", token);
 			localStorage.setItem("nama", name);
 			localStorage.setItem("role", role);
@@ -112,7 +113,7 @@
 	}
 
 	form {
-		width: 30%;
+		width: 20%;
 	}
 
 	.vector {
