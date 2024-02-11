@@ -4,10 +4,12 @@
 	import { ref } from "vue";
 
 	interface Kelas {
-		id_kelas: number;
-		walas: number;
-		nama_kelas: string;
-		nama_walas: string;
+		Id_kelas: number;
+		NamaKelas: string;
+		Walas: {
+			NIS: number;
+			NamaGuru: string;
+		};
 	}
 
 	const kelasData = ref<Kelas[]>([]);
@@ -28,16 +30,16 @@
 		<div class="kelas-content">
 			<router-link
 				v-for="kelas in kelasData"
-				style="text-decoration: none; color: inherit"
-				:key="kelas.id_kelas"
-				:to="{ name: 'kelas', params: { id: kelas.id_kelas } }"
+				:key="kelas.Id_kelas"
+				:to="{ name: 'kelas', params: { id: kelas.Id_kelas } }"
 				class="kelas-card"
+				style="text-decoration: none"
 			>
 				<div class="kelas-card-content">
 					<img src="../assets/Doge hehe.jpg" alt="" class="pp-walas" />
 					<div class="kelas-info">
-						<h1>{{ kelas.nama_kelas }}</h1>
-						<p>{{ kelas.nama_walas }}</p>
+						<h1>{{ kelas.NamaKelas }}</h1>
+						<p>{{ kelas.Walas.NamaGuru }}</p>
 					</div>
 				</div>
 				<div class="list"></div>
