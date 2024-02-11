@@ -230,6 +230,7 @@ type LoginRequest struct {
 }
 
 // LoginHandler handles user login
+// LoginHandler handles user login
 func LoginHandler(c *gin.Context) {
     var req LoginRequest
     if err := c.ShouldBindJSON(&req); err != nil {
@@ -238,14 +239,25 @@ func LoginHandler(c *gin.Context) {
     }
 
     // Retrieve user from the database by NIS
-    user, err := GetUserByNIS(req.NIS)
+    query := "SELECT nis, nama, passphrase, email, gender, agama, status, role FROM users WHERE nis = $1"
+    row := dbConn.QueryRow(query, req.NIS)
+
+    // Initialize a User struct to store the result
+    var user User
+    err := row.Scan(&user.NIS, &user.Name, &user.Passphrase, &user.Email, &user.Gender, &user.Religion, &user.Status, &user.Role)
     if err != nil {
+        // Check if the user is not found
+        if err == sql.ErrNoRows {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid NIS or password"})
+            return
+        }
+        // Handle other errors
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
         return
     }
 
     // Check if user exists and verify password
-    if user == nil || !checkPassword(req.Passphrase, user.Passphrase) {
+    if !checkPassword(req.Passphrase, user.Passphrase) {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid NIS or password"})
         return
     }
@@ -257,9 +269,10 @@ func LoginHandler(c *gin.Context) {
         return
     }
 
-    // Return token to the client
-    c.JSON(http.StatusOK, gin.H{"token": token, "status": user.Status, "name": user.Name})
+    // Return token and user details to the client
+    c.JSON(http.StatusOK, gin.H{"token": token, "status": user.Status, "name": user.Name, "role": user.Role})
 }
+
 
 // checkPassword compares the provided password with the hashed password from the database
 func checkPassword(password string, hashedPassword string) bool {
@@ -286,7 +299,7 @@ func GetSiswaFromKelas(c *gin.Context) {
     }
 
     // querry untuk ngambil semua siswa yang kelasnya sama
-    rows, err := dbConn.Query("SELECT nis, nama, email, profilepicture, gender FROM users WHERE role='User' AND kelas=$1", kelas)
+    rows, err := dbConn.Query("SELECT nis, nama, email, profilepicture, gender FROM users WHERE kelas=$1", kelas)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
         fmt.Println(err)

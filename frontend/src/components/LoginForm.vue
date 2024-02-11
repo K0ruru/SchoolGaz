@@ -16,7 +16,7 @@
 				passphrase: pass.value,
 			});
 
-			const { token, status, name } = response.data;
+			const { token, status, name, role } = response.data;
 
 			if (status != "active") {
 				alert("Akun anda tidak aktif");
@@ -25,6 +25,7 @@
 
 			localStorage.setItem("token", token);
 			localStorage.setItem("nama", name);
+			localStorage.setItem("role", role);
 
 			router.push("/");
 		} catch (error) {
@@ -51,7 +52,7 @@
 			<button class="button" type="submit">Log-in</button>
 			<p>Belum punya akun? <router-link to="/signup">Sign-up</router-link></p>
 		</form>
-    <img src="../assets/vector.png" alt="" class="vector">
+		<img src="../assets/vector.png" alt="" class="vector" />
 	</div>
 </template>
 
@@ -106,17 +107,17 @@
 		margin-bottom: 10px;
 	}
 
-  .container-center {
-    gap: 5rem;
-  }
+	.container-center {
+		gap: 5rem;
+	}
 
-  form {
-    width: 30%;
-  }
+	form {
+		width: 30%;
+	}
 
-  .vector {
-    width: 50%;
-  }
+	.vector {
+		width: 50%;
+	}
 
 	@media (max-width: 991px) {
 		.button {
