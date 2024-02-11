@@ -19,8 +19,8 @@
 
 <template>
 	<div class="header-container">
-		<div class="brand-logo" @click="navigasi('')">
-			<img src="../assets/SG_.png" alt="SG" />
+		<div class="brand-logo" >
+			<img src="../assets/SG_.png" alt="SG" @click="navigasi('')" />
 		</div>
 		<div class="menu-container">
 			<div class="menu-items">
@@ -111,11 +111,11 @@
 		margin-top: 8px;
 		flex-grow: 1;
 		flex-basis: auto;
-		cursor: pointer;
 	}
 
 	.brand-logo img {
 		width: 150px;
+		cursor: pointer;
 		margin-bottom: 7px;
 	}
 	.brand-logo:hover img {

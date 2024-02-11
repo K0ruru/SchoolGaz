@@ -9,6 +9,7 @@ import Signup from "./components/SignupForm.vue";
 import Login from "./components/LoginForm.vue";
 import Profile from "./components/Profile.vue";
 import Tugas from "./components/Tugas.vue";
+import AddTugas from "./components/AddTugas.vue";
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -31,6 +32,12 @@ const routes: Array<RouteRecordRaw> = [
 		component: Guru,
 		meta: { requiresAuth: true },
 	},
+  	{
+		path: "/addtugas",
+		component: AddTugas,
+		meta: { requiresAuth: true },
+	},
+
 	{
 		path: "/signup",
 		component: Signup,

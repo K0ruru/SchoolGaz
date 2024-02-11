@@ -192,9 +192,8 @@ func LoginUser(c *gin.Context) {
 	}
 
 	// Return the token to the client
-	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+	c.JSON(http.StatusOK, gin.H{"token": tokenString, "status": login.Status, "nama": login.Nama})
 }
-
 
 
 
