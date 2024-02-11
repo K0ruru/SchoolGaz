@@ -1,32 +1,54 @@
 package main
 
 import (
-	"net/http"
-	"server/db"
-	"server/routes"
+    "fmt"
+    "net/http"
+    "server/db"
+    "server/routes"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+    "server/model"
+
+    "github.com/gin-contrib/cors"
+    "github.com/gin-gonic/gin"
 )
 
 func main() {
-	db.InitDB()
+    // Initialize the database connection
+    dbInstance, err := db.InitDB()
+    if err != nil {
+        fmt.Println("Failed to initialize database:", err)
+        return
+    }
+    defer dbInstance.Close()
 
-	router := gin.Default()
+    // Perform auto migration for all models
+    if err := model.AutoMigrate(dbInstance); err != nil {
+        fmt.Println("Error migrating models:", err)
+        return
+    }
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:7070"}
-	router.Use(cors.New(config))
+    
+  
+    // Initialize the Gin router
+    router := gin.Default()
 
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello, World!",
-		})
-	})
+    // Configure CORS
+    config := cors.DefaultConfig()
+    config.AllowOrigins = []string{"http://localhost:7070"}
+    router.Use(cors.New(config))
 
-	routes.AuthRoutes(router)
-	routes.KelasRoutes(router)
-	routes.MapelRoutes(router)
+    // Define routes
+    router.GET("/", func(c *gin.Context) {
+        c.JSON(http.StatusOK, gin.H{
+            "message": "Hello, World!",
+        })
+    })
+    routes.AuthRoutes(router)
+    routes.KelasRoutes(router)
+    routes.MapelRoutes(router)
+    routes.GuruRoutes(router)
 
-	router.Run(":8080")
+    // Start the HTTP server
+    router.Run(":8080")
 }
+
