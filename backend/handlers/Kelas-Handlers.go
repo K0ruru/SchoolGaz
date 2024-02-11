@@ -16,13 +16,29 @@ func GetAllKelas(c *gin.Context) {
     var kelases []model.Kelas
 
     // Retrieve all Kelas with their associated Guru
-    if err := dbConn.Preload("Walas").Find(&kelases).Error; err != nil {
+    if err := dbConn.Find(&kelases).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        fmt.Println(err)
         return
+    }
+
+    // Fetch associated Walas for each Kelas
+    for i := range kelases {
+        var walas model.Guru
+        if err := dbConn.First(&walas, kelases[i].WalasID).Error; err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+            fmt.Println(err)
+            return
+        }
+        // Exclude passphrase from Walas object
+        walas.Passphrase = ""
+        kelases[i].Walas = walas
     }
 
     c.JSON(http.StatusOK, kelases)
 }
+
+
 
 func CreateKelas(c *gin.Context) {
     var NewKelas model.Kelas
@@ -30,6 +46,7 @@ func CreateKelas(c *gin.Context) {
     // Bind JSON body to Kelas struct
     if err := c.ShouldBindJSON(&NewKelas); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        fmt.Println(err)
         return
     }
 
@@ -43,6 +60,12 @@ func CreateKelas(c *gin.Context) {
     // Respond with the newly created Kelas
     c.JSON(http.StatusOK, NewKelas)
 }
+
+func GetKelas(c *gin.Context){
+  
+  
+}
+
 /*
 func GetKelas(c *gin.Context) {
     id := c.Param("id") // ambil id nya dari url 
