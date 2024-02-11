@@ -1,53 +1,49 @@
 package handlers
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
-	"strconv"
+	"server/model"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Kelas struct{
-  ID          int       `json:"id_kelas"`
-  Walas       int       `json:"walas"`
-  Nama_kelas  string    `json:"nama_kelas"`
-  NamaWalas   string    `json:"nama_walas"` //Gw buat filed buat nyimpan nama walasnya
-}
+
 
 
 
 func GetAllKelas(c *gin.Context) {
-    rows, err := dbConn.Query("SELECT kelas.*, users.nama FROM kelas JOIN users ON kelas.walas = users.nis") //Ini kurleb querry nya bilang hey ambil nama dari tabel user 
-                                                                                                            //terus join usernya dimana data kolom walas sama dengan kolom nis di tabel users
+    var kelases []model.Kelas
 
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mendapatkan data kelas"})
+    // Retrieve all Kelas with their associated Guru
+    if err := dbConn.Preload("Walas").Find(&kelases).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, kelases)
+}
+
+func CreateKelas(c *gin.Context) {
+    var NewKelas model.Kelas
+
+    // Bind JSON body to Kelas struct
+    if err := c.ShouldBindJSON(&NewKelas); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    // Create new record in the database
+    if err := dbConn.Create(&NewKelas).Error; err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         fmt.Println(err)
         return
     }
-    defer rows.Close()
 
-    var kelasKelas []Kelas
-
-    for rows.Next() {
-        var kelas Kelas                                                //dimasukin ke field kelas tadi
-        if err:= rows.Scan(&kelas.ID, &kelas.Walas, &kelas.Nama_kelas, &kelas.NamaWalas); err != nil {
-             c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal ngescan"})
-             fmt.Println(err)
-        }
-        kelasKelas = append(kelasKelas, kelas)
-    }
-
-    if err := rows.Err(); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error" : "Gagal mendapatkan user yang di scan"})
-        fmt.Println(err)
-    }
-
-    c.JSON(http.StatusOK, kelasKelas)
+    // Respond with the newly created Kelas
+    c.JSON(http.StatusOK, NewKelas)
 }
-
+/*
 func GetKelas(c *gin.Context) {
     id := c.Param("id") // ambil id nya dari url 
 
@@ -158,4 +154,4 @@ func DeleteKelas(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Kelas deleted successfully"})
 }
 
-
+*/
