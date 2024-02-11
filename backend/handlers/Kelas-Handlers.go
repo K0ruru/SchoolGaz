@@ -13,15 +13,18 @@ import (
 
 
 func GetAllKelas(c *gin.Context) {
-    var kelases []model.Kelas
-
-    // Retrieve all Kelas with their associated Guru
-    if err := dbConn.Preload("Walas").Find(&kelases).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+    if dbConn == nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "error connection or from the server error"})
         return
     }
 
-    c.JSON(http.StatusOK, kelases)
+    var AllKelas []model.Kelas
+    if err := dbConn.Preload("Walas").Find(&AllKelas).Error; err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "cannot find kelas"})
+        return
+    }
+
+    c.JSON(http.StatusOK, AllKelas)
 }
 
 func CreateKelas(c *gin.Context) {

@@ -21,6 +21,7 @@ type User struct {
 	Religion       string     `gorm:"type:varchar(25)"`
 	Profilepicture string     `gorm:"type:varchar(50)"`
 	Status         StatusEnum `gorm:"type:status_enum;default:'pending'"`
+	Kelas 				 *int				
 }
 
 func AutoMigrate(db *gorm.DB) error {
@@ -75,8 +76,23 @@ func AutoMigrate(db *gorm.DB) error {
         return err
     }
     }
+    
+		var fkKelasUser bool
+    if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'users_kelas_kelas_id_kelas_foreign' AND table_name = 'users')").Row().Scan(&fkKelasUser); err != nil {
+    return err
+    }
+    
+    if !fkKelasUser {
+			if err := db.Model(&User{}).AddForeignKey("kelas", "kelas(Id_kelas)", "SET NULL", "CASCADE").Error; err != nil {
+				return err
+		}
+		
+    }
 	// Add index for Guru model
 	db.Model(&Guru{}).AddIndex("idx_gurus_role", "role")
+
+	
+
 
 	return nil
 }

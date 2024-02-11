@@ -5,11 +5,11 @@
 	import { useRoute } from "vue-router";
 
 	interface Siswa {
-		nis: number;
-		name: string;
-		profilepicture: string;
-		email: string;
-		gender: string;
+		NIS: number;
+		Nama: string;
+		Profilepicture: string;
+		Email: string;
+		Gender: string;
 	}
 
 	const siswaData = ref<Siswa[]>([]);
@@ -25,7 +25,9 @@
 				`http://localhost:8080/Auth/siswa/${kelasId}`
 			);
 			// Update the siswaData with the received data
-			siswaData.value = response.data;
+			siswaData.value = response.data.sort((a: Siswa, b: Siswa) =>
+				a.Nama.localeCompare(b.Nama)
+			);
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		}
@@ -86,18 +88,16 @@
 							<!-- Use a conditional check for profile_picture -->
 							<td>
 								<img
-									:src="
-										siswa.profilepicture !== ''
-											? siswa.profilepicture
-											: require('../assets/Doge hehe.jpg')
-									"
+									v-if="siswa.Profilepicture"
+									:src="siswa.Profilepicture"
 									alt=""
 								/>
+								<img v-else src="../assets/Doge hehe.jpg" alt="" />
 							</td>
-							<td>{{ siswa.name }}</td>
-							<td>{{ siswa.nis }}</td>
-							<td>{{ siswa.email }}</td>
-							<td>{{ siswa.gender }}</td>
+							<td>{{ siswa.Nama }}</td>
+							<td>{{ siswa.NIS }}</td>
+							<td>{{ siswa.Email }}</td>
+							<td>{{ siswa.Gender }}</td>
 						</tr>
 					</tbody>
 				</table>

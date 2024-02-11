@@ -195,6 +195,24 @@ func LoginUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": tokenString, "status": login.Status, "nama": login.Nama})
 }
 
+func GetAllUserByKelas(c *gin.Context) {
+	if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"ERROR": "database connection error, or from the server error"})
+		return
+	}
+
+	kelas := c.Param("Kelas")
+	var GetAlluser []model.User
+
+	if err := dbConn.Where("Kelas = ?", kelas).Find(&GetAlluser).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user no found"})
+		fmt.Println(err)
+		return
+	}
+	c.JSON(http.StatusCreated, GetAlluser)
+
+}
+
 
 
 
