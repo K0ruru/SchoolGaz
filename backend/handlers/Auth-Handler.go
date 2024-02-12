@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"server/db"
 	"server/model"
+	"strconv"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -211,6 +213,41 @@ func GetAllUserByKelas(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, GetAlluser)
 
+}
+
+func UploadProfilePicture(c *gin.Context) {
+	nisParam := c.Param("NIS")
+	nis, err := strconv.Atoi(nisParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid NIS"})
+		return
+	}
+
+	// Retrieve the file from the form data
+	file, err := c.FormFile("profilePicture")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to retrieve the file"})
+		return
+	}
+
+	// Create a unique filename for the uploaded file
+	fileName := filepath.Join("profile_pictures", strconv.Itoa(nis)+"_"+file.Filename)
+
+	// Save the file to the server
+	if err := c.SaveUploadedFile(file, fileName); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save the file"})
+		return
+	}
+
+	// Update the user's Profilepicture field with the filename
+	if err := dbConn.Model(&model.User{}).Where("NIS = ?", nis).Update("Profilepicture", fileName).Error; err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user profile picture"})
+    return
+}
+
+
+	// Return success response
+	c.JSON(http.StatusOK, gin.H{"message": "Profile picture uploaded successfully"})
 }
 
 

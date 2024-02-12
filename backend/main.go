@@ -37,6 +37,8 @@ func main() {
     config.AllowOrigins = []string{"http://localhost:7070"}
     router.Use(cors.New(config))
 
+    router.Static("/profile_pictures", "./profile_pictures")
+
     // Define routes
     router.GET("/", func(c *gin.Context) {
         c.JSON(http.StatusOK, gin.H{

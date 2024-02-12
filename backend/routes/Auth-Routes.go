@@ -16,6 +16,7 @@ func AuthRoutes(router *gin.Engine) {
        AuthGroup.DELETE("/del/:NIS", handlers.DelUser)
        AuthGroup.POST("/login", handlers.LoginUser)
        AuthGroup.GET("/siswa/:Kelas", handlers.GetAllUserByKelas)
+       AuthGroup.PUT("/pp/:NIS", handlers.UploadProfilePicture)
     }
 }
 

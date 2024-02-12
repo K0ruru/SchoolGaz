@@ -15,7 +15,7 @@ type User struct {
 	No_telp        int64      `gorm:"type:bigint" json:"No_telp"`
 	Gender         string     `gorm:"type:varchar(25)"`
 	Religion       string     `gorm:"type:varchar(25)"`
-	Profilepicture string     `gorm:"type:varchar(50)"`
+	Profilepicture string     `gorm:"type:varchar(255)"`
 	Status         StatusEnum `gorm:"type:status_enum;default:'pending'"`
 	Kelas          *int
 }

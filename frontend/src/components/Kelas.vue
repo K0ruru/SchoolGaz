@@ -61,6 +61,12 @@
 			kelasWalasData.value = response.data;
 		} catch (error) {}
 	});
+
+	const getProfilePictureUrl = (filePath: string) => {
+		const baseURL = "http://localhost:8080"; // Replace with your backend base URL
+		const normalizedPath = filePath.replace(/\\/g, "/"); // Replace backslashes with forward slashes
+		return `${baseURL}/${normalizedPath}`;
+	};
 </script>
 
 <template>
@@ -125,7 +131,7 @@
 							<td>
 								<img
 									v-if="siswa.Profilepicture"
-									:src="siswa.Profilepicture"
+									:src="getProfilePictureUrl(siswa.Profilepicture)"
 									alt=""
 								/>
 								<img v-else src="../assets/Doge hehe.jpg" alt="" />
