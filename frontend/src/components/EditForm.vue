@@ -7,14 +7,14 @@
 	const emits = defineEmits(["closeEditForm"]);
 
 	const statusOptions = ref(["active", "pending"]);
-	const selectedStatus = ref(userData.status);
+	const selectedStatus = ref(userData.Status);
 
-	const nis = ref(userData.nis);
-	const nama = ref(userData.name);
-	const email = ref(userData.email);
-	const noTelp = ref(userData.no_telp);
-	const jenkel = ref(userData.gender);
-	const agama = ref(userData.religion);
+	const nis = ref(userData.NIS);
+	const nama = ref(userData.Nama);
+	const email = ref(userData.Email);
+	const noTelp = ref(userData.No_telp);
+	const jenkel = ref(userData.Gender);
+	const agama = ref(userData.Religion);
 
 	const saveChanges = async () => {
 		try {
@@ -33,13 +33,17 @@
 
 			if (response.status === 200) {
 				// Data successfully updated
-				emits("closeEditForm"); // Emit the closeEditForm event
-				Swal.fire("Success", "Data updated successfully!", "success").then(
-					() => {
-						// Reload the page after the user presses "OK"
-						window.location.reload();
-					}
-				);
+				const result = await Swal.fire({
+					icon: "success",
+					title: "Success",
+					text: "Data updated successfully!",
+					showConfirmButton: true,
+				});
+
+				if (result.isConfirmed) {
+					emits("closeEditForm"); // Emit the closeEditForm event
+					window.location.reload();
+				}
 			} else {
 				// Handle other status codes or errors
 				console.error("Failed to update data.");
