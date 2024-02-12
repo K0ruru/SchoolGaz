@@ -2,25 +2,25 @@ package handlers
 
 import (
 	"net/http"
-	"server/database"
-	"server/models"
+	"server/db"
+	"server/model"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 func IndexTugas(c *gin.Context) {
-	var tugas []models.Tugas
-	database.DB.Find(&tugas)
+	var tugas []model.Tugas
+	db.DB.Find(&tugas)
 	c.JSON(http.StatusOK, gin.H{"tugas": tugas})
 }
 
 func ShowTugas(c *gin.Context) {
-	var tugas []models.Tugas
+	var tugas []model.Tugas
 	id := c.Param("id")
 
-	if err := database.DB.First(&tugas, id).Error; err != nil {
+	if err := db.DB.First(&tugas, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "data tidak ditemukan"})
 			return
@@ -33,7 +33,7 @@ func ShowTugas(c *gin.Context) {
 }
 
 func CreateTugas(c *gin.Context) {
-	var tugas models.Tugas
+	var tugas model.Tugas
 
 	if err := c.ShouldBindJSON(&tugas); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -42,12 +42,12 @@ func CreateTugas(c *gin.Context) {
 
 	tugas.Pembuatan = time.Now()
 
-	database.DB.Create(&tugas)
+	db.DB.Create(&tugas)
 	c.JSON(http.StatusOK, gin.H{"tugas": tugas})
 }
 
 func UpdateTugas(c *gin.Context) {
-	var tugas models.Tugas
+	var tugas model.Tugas
 	id := c.Param("id")
 
 	if err := c.ShouldBindJSON(&tugas); err != nil {
@@ -55,7 +55,7 @@ func UpdateTugas(c *gin.Context) {
 		return
 	}
 
-	if database.DB.Model(&tugas).Where("id=?", id).Updates(&tugas).RowsAffected == 0 {
+	if db.DB.Model(&tugas).Where("id=?", id).Updates(&tugas).RowsAffected == 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Tidak dapat mengedit"})
 		return
 	}
@@ -64,22 +64,29 @@ func UpdateTugas(c *gin.Context) {
 }
 
 func DeleteTugas(c *gin.Context) {
-	var tugas models.Tugas
+	var tugas model.Tugas
 
 	// Get tugas ID from URL parameter
 	id := c.Param("id")
 
 	// Find the tugas by ID
-	if err := database.DB.First(&tugas, id).Error; err != nil {
+	if err := db.DB.First(&tugas, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"message": "Tugas tidak ditemukan"})
 		return
 	}
 
+	// Begin transaction
+	tx := db.DB.Begin()
+
 	// Delete tugas from database
-	if err := database.DB.Delete(&tugas).Error; err != nil {
+	if err := tx.Delete(&tugas).Error; err != nil {
+		tx.Rollback() // Rollback transaction if there's an error
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal menghapus tugas dari database"})
 		return
 	}
+
+	// Commit transaction if deletion is successful
+	tx.Commit()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Data berhasil dihapus"})
 }

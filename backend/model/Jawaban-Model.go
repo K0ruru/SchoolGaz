@@ -1,7 +1,6 @@
-package models
+package model
 
 import (
-	"server/database"
 	"time"
 )
 
@@ -12,10 +11,4 @@ type Jawaban struct {
 	Tugas     Tugas     `gorm:"foreignKey:TugasID"`
 	Pembuatan time.Time `json:"pembuatan"`
 	Nilai     *uint32   `gorm:"default:0" json:"nilai"`
-}
-
-func AutoMigrateJawaban() {
-	if err := database.DB.AutoMigrate(&Jawaban{}); err != nil {
-		panic(err)
-	}
 }

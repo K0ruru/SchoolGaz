@@ -1,7 +1,6 @@
-package models
+package model
 
 import (
-	"server/database"
 	"time"
 )
 
@@ -12,10 +11,4 @@ type Tugas struct {
 	Pembuatan time.Time `json:"pembuatan"`
 	Deadline  time.Time `json:"deadline"`
 	Status    string    `gorm:"type:varchar(10)" default:"active" json:"status"`
-}
-
-func AutoMigrateTugas() {
-	if err := database.DB.AutoMigrate(&Tugas{}); err != nil {
-		panic(err)
-	}
 }
