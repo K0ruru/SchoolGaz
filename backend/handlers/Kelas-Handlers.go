@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"server/model"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,16 +28,19 @@ func GetAllKelas(c *gin.Context) {
     c.JSON(http.StatusOK, AllKelas)
 }
 
+
+
 func CreateKelas(c *gin.Context) {
     var NewKelas model.Kelas
 
     // Bind JSON body to Kelas struct
     if err := c.ShouldBindJSON(&NewKelas); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        fmt.Println(err)
         return
     }
 
-    // Create new record in the database
+    // Create new record for Kelas in the database
     if err := dbConn.Create(&NewKelas).Error; err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         fmt.Println(err)
@@ -45,6 +49,38 @@ func CreateKelas(c *gin.Context) {
 
     // Respond with the newly created Kelas
     c.JSON(http.StatusOK, NewKelas)
+}
+
+func GetKelas(c *gin.Context) {
+    var kelas model.Kelas
+    ID := c.Param("id_kelas")
+
+    kelasID, err := strconv.Atoi(ID)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id_kelas"})
+        fmt.Println(err)
+        return
+    }
+
+    // Fetch the kelas with the given ID
+    if err := dbConn.First(&kelas, kelasID).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        fmt.Println(err)
+        return
+    }
+
+    // Fetch associated Walas for the Kelas
+    var walas model.Guru
+    if err := dbConn.First(&walas, kelas.WalasNIS).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        fmt.Println(err)
+        return
+    }
+    // Exclude passphrase from Walas object
+    walas.Passphrase = ""
+    kelas.Walas = walas
+
+    c.JSON(http.StatusOK, kelas)
 }
 /*
 func GetKelas(c *gin.Context) {
