@@ -44,12 +44,9 @@
 				confirmButtonColor: "#ff0000",
 			});
 			if (result.isConfirmed) {
-				const response = await fetch(
-					`http://localhost:8080/Auth/delete/${nis}`,
-					{
-						method: "DELETE",
-					}
-				);
+				const response = await fetch(`http://localhost:8080/Auth/del/${nis}`, {
+					method: "DELETE",
+				});
 
 				if (response.ok) {
 					// Remove the deleted user from the data array
