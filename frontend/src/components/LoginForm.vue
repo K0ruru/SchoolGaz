@@ -2,7 +2,10 @@
 	import { ref } from "vue";
 	import { useRouter } from "vue-router";
 	import axios, { AxiosError } from "axios";
-	import Swal from "sweetalert2"; // Import SweetAlert directly
+	import { useToast } from "primevue/usetoast";
+	import Toast from "primevue/toast";
+
+	const toast = useToast();
 
 	const nis = ref("");
 	const pass = ref("");
@@ -19,10 +22,11 @@
 			const { token, status, nama, NIS } = response.data;
 
 			if (status !== "active") {
-				await Swal.fire({
-					icon: "error",
-					title: "Account not active",
-					text: "Akun anda tidak aktif",
+				toast.add({
+					severity: "error",
+					summary: "Error",
+					detail: "Maaf akun anda belum aktif.",
+					life: 3000,
 				});
 				return;
 			}
@@ -39,16 +43,18 @@
 				const errorData = axiosError.response.data;
 
 				if (errorData.error === "User not found") {
-					await Swal.fire({
-						icon: "error",
-						title: "User not found",
-						text: "User tidak ditemukan",
+					toast.add({
+						severity: "error",
+						summary: "Error",
+						detail: "Tidak ada user dengan nis itu :(",
+						life: 3000,
 					});
 				} else if (errorData.error === "Invalid password") {
-					await Swal.fire({
-						icon: "error",
-						title: "Invalid password",
-						text: "Password salah",
+					toast.add({
+						severity: "error",
+						summary: "Error",
+						detail: "Password yang anda masukkan salah.",
+						life: 3000,
 					});
 				} else {
 					console.error("Error logging in:", error);
@@ -62,6 +68,7 @@
 
 <template>
 	<div class="container-center">
+		<Toast position="bottom-left" />
 		<form @submit.prevent="login">
 			<h1>Login</h1>
 			<div class="form-inputs">

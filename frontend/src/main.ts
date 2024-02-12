@@ -5,7 +5,6 @@ import "./style.css";
 import PrimeVue from "primevue/config";
 import ToastService from "primevue/toastservice";
 import ConfirmService from "primevue/confirmationservice";
-import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import "primevue/resources/themes/aura-light-indigo/theme.css";
 
@@ -35,7 +34,6 @@ router.beforeEach((to, _, next) => {
 app.use(PrimeVue, { ripple: true });
 app.use(ToastService as any);
 app.use(ConfirmService);
-app.use(VueSweetalert2);
 app.use(router);
 
 app.mount("#app");
