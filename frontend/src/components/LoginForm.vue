@@ -1,8 +1,8 @@
-<!-- Login.vue -->
 <script setup lang="ts">
 	import { ref } from "vue";
 	import { useRouter } from "vue-router";
-	import axios from "axios";
+	import axios, { AxiosError } from "axios";
+	import Swal from "sweetalert2"; // Import SweetAlert directly
 
 	const nis = ref("");
 	const pass = ref("");
@@ -18,8 +18,12 @@
 
 			const { token, status, nama, role } = response.data;
 
-			if (status != "active") {
-				alert("Akun anda tidak aktif");
+			if (status !== "active") {
+				await Swal.fire({
+					icon: "error",
+					title: "Account not active",
+					text: "Akun anda tidak aktif",
+				});
 				return;
 			}
 
@@ -28,8 +32,30 @@
 			localStorage.setItem("nama", nama);
 
 			router.push("/");
-		} catch (error) {
-			console.error("Error logging in:");
+		} catch (error: any) {
+			const axiosError = error as AxiosError<{ error: string }>;
+
+			if (axiosError.response && axiosError.response.status === 400) {
+				const errorData = axiosError.response.data;
+
+				if (errorData.error === "User not found") {
+					await Swal.fire({
+						icon: "error",
+						title: "User not found",
+						text: "User tidak ditemukan",
+					});
+				} else if (errorData.error === "Invalid password") {
+					await Swal.fire({
+						icon: "error",
+						title: "Invalid password",
+						text: "Password salah",
+					});
+				} else {
+					console.error("Error logging in:", error);
+				}
+			} else {
+				console.error("Error logging in:", error);
+			}
 		}
 	};
 </script>
