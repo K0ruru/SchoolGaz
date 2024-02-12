@@ -24,10 +24,10 @@ axios
 </script>
 <template>
   <div class="floating-overlay">
-    <div class="floating-container">
+    <div class="floating-container fade-in fade-out">
       <div class="close-button">
       <button @click="emits('closeFloatingKelas')" class="button-close">
-        ✖
+        x
       </button>
       </div>
       <div class="kelas-content">
@@ -47,6 +47,22 @@ axios
 </template>
 
 <style scoped>
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+      transform: translateY(90px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 .floating-overlay {
   position: fixed;
   top: 0;
@@ -68,6 +84,7 @@ axios
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 255, 0.1);
 }
+
 
 .kelas-content {
   display: flex;
@@ -184,3 +201,4 @@ axios
   justify-content: flex-end;
 }
 </style>
+
