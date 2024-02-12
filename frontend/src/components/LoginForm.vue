@@ -87,6 +87,7 @@
 		text-align: center;
 		margin-bottom: 17px;
 	}
+
 	.form-inputs {
 		display: flex;
 		flex-direction: column;

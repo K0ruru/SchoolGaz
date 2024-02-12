@@ -26,7 +26,7 @@
 </script>
 <template>
 	<div class="floating-overlay">
-		<div class="floating-container">
+		<div class="floating-container fade-in">
 			<div class="close-button">
 				<button @click="emits('closeFloatingKelas')" class="button-close">
 					✖
@@ -54,6 +54,18 @@
 </template>
 
 <style scoped>
+ .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 	.floating-overlay {
 		position: fixed;
 		top: 0;

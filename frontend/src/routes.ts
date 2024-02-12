@@ -10,6 +10,7 @@ import Login from "./components/LoginForm.vue";
 import Profile from "./components/Profile.vue";
 import Tugas from "./components/Tugas.vue";
 import AddTugas from "./components/AddTugas.vue";
+import AddTugasForm from "./components/AddTugasForm.vue";
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -37,6 +38,12 @@ const routes: Array<RouteRecordRaw> = [
 		component: AddTugas,
 		meta: { requiresAuth: true },
 	},
+    	{
+		path: "/addtugasform",
+		component: AddTugasForm,
+		meta: { requiresAuth: true },
+	},
+
 
 	{
 		path: "/signup",
