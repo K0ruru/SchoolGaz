@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import Swal from "sweetalert2";
+import InputText from "primevue/inputtext";
 
 const nis = ref("");
 const pass = ref("");
@@ -50,10 +51,12 @@ const login = async () => {
       <div class="form-inputs">
         <div class="form-input">
           <label for="nis">NIS :</label>
+          <!-- <InputText id="nis" name="nis" v-model="nis" variant="filled" /> -->
           <input v-model="nis" type="number" id="nis" name="nis" />
         </div>
         <div class="form-input">
           <label for="pass">Passphrase :</label>
+          <!-- <InputText type="password" id="pass" name="pass" v-model="pass" variant="filled" /> -->
           <input v-model="pass" type="password" id="pass" name="pass" />
         </div>
       </div>
@@ -93,10 +96,6 @@ h1 {
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-}
-
-.form-input input:focus {
-  outline: none;
 }
 
 .form-input input:focus::placeholder {

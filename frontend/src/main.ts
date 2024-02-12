@@ -5,7 +5,12 @@ import App from "./App.vue";
 import router from "./routes";
 import "./style.css";
 
+import PrimeVue from 'primevue/config';
+import "primevue/resources/themes/aura-light-indigo/theme.css";
+
+
 const app = createApp(App);
+app.use(PrimeVue);
 
 // Add a global navigation guard
 router.beforeEach((to, _, next) => {
