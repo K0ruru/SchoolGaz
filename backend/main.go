@@ -11,10 +11,14 @@ import (
 
 func main() {
 	r := gin.Default()
-	database.ConnectDatabase()
-	models.AutoMigrateTugas()
 
-	routes.SetupRoutes(r)
+	database.ConnectDatabase()
+
+	models.AutoMigrateTugas()
+	models.AutoMigrateJawaban()
+	models.AutoMigrateUploadTugas()
+
+	routes.TugasRoutes(r)
 
 	r.Run()
 }

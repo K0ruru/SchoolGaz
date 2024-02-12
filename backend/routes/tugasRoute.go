@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(r *gin.Engine) {
+func TugasRoutes(r *gin.Engine) {
 	tugasGroup := r.Group("/tugas")
 	{
-		tugasGroup.GET("/", tugasHandlers.Index)
-		tugasGroup.GET("/:id", tugasHandlers.Show)
-		tugasGroup.POST("/create", tugasHandlers.Create)
-		tugasGroup.PUT("/update/:id", tugasHandlers.Update)
-		tugasGroup.DELETE("/delete", tugasHandlers.Delete)
+		tugasGroup.GET("/", tugasHandlers.IndexTugas)
+		tugasGroup.GET("/:id", tugasHandlers.ShowTugas)
+		tugasGroup.POST("/create", tugasHandlers.CreateTugas)
+		tugasGroup.PUT("/update/:id", tugasHandlers.UpdateTugas)
+		tugasGroup.DELETE("/delete/:id", tugasHandlers.DeleteTugas)
 	}
 }
