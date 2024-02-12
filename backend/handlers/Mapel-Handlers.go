@@ -1,18 +1,32 @@
 package handlers
-/*
+
 import (
-	"fmt"
 	"net/http"
-	"strconv"
+	"server/model"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Mapel struct{
-  ID  int `json:"id_mapel"`
-  Nama_mapel string `json:"nama_mapel"`
-  Guru int `json:"guru"`
+
+func CreateMapel(c *gin.Context){
+  if dbConn == nil{
+    c.JSON(http.StatusInternalServerError,gin.H{"error":"erorr database connection or from the server error"})
+    return
+  }
+
+  var newMapel model.Mapel
+  if err := c.ShouldBindJSON(&newMapel); err != nil{
+    c.JSON(http.StatusBadRequest, gin.H{"error": err})
+    return
+  }
+  if err := dbConn.Create(&newMapel).Error; err != nil{
+    c.JSON(http.StatusNotAcceptable, gin.H{"error": err})
+    return
+  }
+  c.JSON(http.StatusCreated,newMapel)
+
 }
+/*
 
 func CreateMapel(c *gin.Context){
 var newMapel Mapel
