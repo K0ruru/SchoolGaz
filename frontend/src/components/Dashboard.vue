@@ -11,8 +11,6 @@
 		router.push(`/${tab}`);
 	};
 
-	const role = localStorage.getItem("role");
-
 	const username = localStorage.getItem("nama");
 </script>
 
@@ -33,7 +31,7 @@
 
 		<div class="cont">
 			<!-- box untuk siswa -->
-			<div v-if="role === 'Guru'" class="box" @click="navigasi('siswa')">
+			<div class="box" @click="navigasi('siswa')">
 				<div class="content">
 					<div class="icon-1"><ion-icon name="people-outline"></ion-icon></div>
 					<div class="text">
