@@ -10,6 +10,8 @@
 		router.push(`/${tab}`);
 	};
 
+	const nis = localStorage.getItem("NIS");
+
 	const logout = () => {
 		localStorage.removeItem("token");
 		localStorage.removeItem("nama");
@@ -19,7 +21,7 @@
 
 <template>
 	<div class="header-container">
-		<div class="brand-logo" >
+		<div class="brand-logo">
 			<img src="../assets/SG_.png" alt="SG" @click="navigasi('')" />
 		</div>
 		<div class="menu-container">
@@ -37,7 +39,14 @@
 		<div class="profile-dropdown">
 			<div class="profile-section">PROFILE</div>
 			<div class="dropdown-content">
-				<a href="#" @click="navigasi('profile')">Profile</a>
+				<router-link
+					:key="nis ?? 'defaultKey'"
+					:to="{ name: 'profile', params: { id: nis } }"
+					class="kelas-card"
+					style="text-decoration: none"
+				>
+					<a href="#">Profile</a>
+				</router-link>
 				<a href="#">Settings</a>
 				<a href="#" @click="logout">Logout</a>
 			</div>

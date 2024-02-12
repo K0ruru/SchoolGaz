@@ -18,4 +18,5 @@ type User struct {
 	Profilepicture string     `gorm:"type:varchar(255)"`
 	Status         StatusEnum `gorm:"type:status_enum;default:'pending'"`
 	Kelas          *int
+	KelasData      Kelas `gorm:"foreignkey:Kelas"`
 }

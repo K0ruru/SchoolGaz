@@ -16,7 +16,7 @@
 				passphrase: pass.value,
 			});
 
-			const { token, status, nama, role } = response.data;
+			const { token, status, nama, NIS } = response.data;
 
 			if (status !== "active") {
 				await Swal.fire({
@@ -27,7 +27,7 @@
 				return;
 			}
 
-			localStorage.setItem("role", role);
+			localStorage.setItem("NIS", NIS);
 			localStorage.setItem("token", token);
 			localStorage.setItem("nama", nama);
 

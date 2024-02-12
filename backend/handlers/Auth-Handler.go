@@ -119,11 +119,12 @@ func GetUser(c *gin.Context) {
 	nis := c.Param("NIS")
 	var Getuser model.User
 
-	if err := dbConn.Where("NIS = ?", nis).First(&Getuser).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "user no found"})
-		fmt.Println(err)
-		return
-	}
+	if err := dbConn.Preload("KelasData").Where("NIS = ?", nis).First(&Getuser).Error; err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+    fmt.Println(err)
+    return
+}
+	
 	c.JSON(http.StatusCreated, Getuser)
 
 }
@@ -149,7 +150,7 @@ func GetALLuser(c *gin.Context) {
 		return
 	}
 	var AllUser []model.User
-	if err := dbConn.Find(&AllUser).Error; err != nil {
+	if err := dbConn.Preload("KelasData").Find(&AllUser).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot find user"})
 		return
 	}
@@ -195,7 +196,7 @@ func LoginUser(c *gin.Context) {
 	}
 
 	// Return the token to the client
-	c.JSON(http.StatusOK, gin.H{"token": tokenString, "status": login.Status, "nama": login.Nama})
+	c.JSON(http.StatusOK, gin.H{"token": tokenString, "status": login.Status, "nama": login.Nama, "NIS": login.NIS})
 }
 
 func GetAllUserByKelas(c *gin.Context) {

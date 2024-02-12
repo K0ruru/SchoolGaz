@@ -33,7 +33,6 @@
 	const route = useRoute();
 
 	onMounted(async () => {
-		// Get kelas ID from the route parameter
 		const kelasId = route.params.id;
 
 		try {

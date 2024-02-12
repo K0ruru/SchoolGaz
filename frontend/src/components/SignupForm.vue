@@ -159,6 +159,10 @@
 		width: 30%;
 	}
 
+	form h1 {
+		margin-bottom: 20px;
+	}
+
 	.container-center {
 		gap: 5rem;
 	}
@@ -185,7 +189,6 @@
 	label {
 		display: block;
 		margin-bottom: 8px;
-		font-weight: bold;
 	}
 
 	select {

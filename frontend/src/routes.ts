@@ -33,17 +33,16 @@ const routes: Array<RouteRecordRaw> = [
 		component: Guru,
 		meta: { requiresAuth: true },
 	},
-  	{
+	{
 		path: "/addtugas",
 		component: AddTugas,
 		meta: { requiresAuth: true },
 	},
-    	{
+	{
 		path: "/addtugasform",
 		component: AddTugasForm,
 		meta: { requiresAuth: true },
 	},
-
 
 	{
 		path: "/signup",
@@ -54,7 +53,8 @@ const routes: Array<RouteRecordRaw> = [
 		component: Login,
 	},
 	{
-		path: "/profile",
+		path: "/profile/:id",
+		name: "profile",
 		component: Profile,
 		meta: { requiresAuth: true },
 	},

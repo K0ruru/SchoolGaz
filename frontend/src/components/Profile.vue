@@ -1,14 +1,49 @@
 <script setup lang="ts">
+	import axios from "axios";
 	import Navbar from "./Navbar.vue";
-	import { ref } from "vue";
-	import { useRouter } from "vue-router";
+	import { ref, onMounted } from "vue";
+	import { useRouter, useRoute } from "vue-router";
 
 	const tabAktif = ref("");
 	const router = useRouter();
+	const route = useRoute();
 
 	const navigasi = (tab: string) => {
 		tabAktif.value = tab;
 		router.push(`/${tab}`);
+	};
+
+	interface User {
+		NIS: number;
+		Nama: string;
+		Profilepicture: string;
+		Email: string;
+		No_telp: number;
+		Gender: string;
+		Religion: string;
+		KelasData: {
+			NamaKelas: string;
+		};
+	}
+
+	const userData = ref<User | null>(null);
+
+	onMounted(async () => {
+		const NIS = route.params.id;
+
+		try {
+			const response = await axios.get(`http://localhost:8080/Auth/get/${NIS}`);
+
+			userData.value = response.data;
+		} catch (error) {
+			console.log(error);
+		}
+	});
+
+	const getProfilePictureUrl = (filePath: string) => {
+		const baseURL = "http://localhost:8080";
+		const normalizedPath = filePath.replace(/\\/g, "/");
+		return `${baseURL}/${normalizedPath}`;
 	};
 </script>
 
@@ -17,31 +52,42 @@
 		<Navbar />
 		<div class="profile-content">
 			<div class="profile-information">
-				<img src="../assets/Doge hehe.jpg" alt="" class="profile-picture" />
+				<img
+					v-if="userData?.Profilepicture"
+					:src="getProfilePictureUrl(userData?.Profilepicture)"
+					alt=""
+					class="profile-picture"
+				/>
+				<img
+					v-else
+					src="../assets/Doge hehe.jpg"
+					alt=""
+					class="profile-picture"
+				/>
 				<p class="nis">001002003</p>
 				<div class="profile-info">
 					<p>Nama :</p>
-					<p>Doge</p>
+					<p>{{ userData?.Nama }}</p>
 				</div>
 				<div class="profile-info">
 					<p>Kelas :</p>
-					<p>XI - RPL</p>
+					<p>{{ userData?.KelasData.NamaKelas }}</p>
 				</div>
 				<div class="profile-info">
 					<p>Email :</p>
-					<p>Dogeisthebest@gmail.com</p>
+					<p>{{ userData?.Email }}</p>
+				</div>
+				<div class="profile-info">
+					<p>No-Telpon :</p>
+					<p>{{ userData?.No_telp }}</p>
 				</div>
 				<div class="profile-info">
 					<p>Gender :</p>
-					<p>Doge</p>
+					<p>{{ userData?.Gender }}</p>
 				</div>
 				<div class="profile-info">
 					<p>Agama :</p>
-					<p>The Religion Of Doge</p>
-				</div>
-				<div class="profile-info">
-					<p>Role :</p>
-					<p>Siswa</p>
+					<p>{{ userData?.Religion }}</p>
 				</div>
 			</div>
 			<div class="tugas-container">

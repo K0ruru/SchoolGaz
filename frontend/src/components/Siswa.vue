@@ -12,7 +12,11 @@
 		Religion: string;
 		No_telp: number;
 		Status: string;
-		[key: string]: number | string;
+		Kelas: number;
+		KelasData: {
+			NamaKelas: string;
+		};
+		[key: string]: number | string | { NamaKelas: string };
 	}
 
 	const search = ref("");
@@ -128,6 +132,7 @@
 					<th @click="sortTable('Nama')">Nama</th>
 					<th @click="sortTable('Email')">E-mail</th>
 					<th @click="sortTable('No_telp')">No-Telpon</th>
+					<th @click="sortTable('Kelas')">Kelas</th>
 					<th @click="sortTable('Gender')">Jenis Kelamin</th>
 					<th @click="sortTable('Religion')">Agama</th>
 					<th @click="sortTable('Status')">Status</th>
@@ -140,6 +145,7 @@
 					<td>{{ userData.Nama }}</td>
 					<td>{{ userData.Email }}</td>
 					<td>{{ userData.No_telp }}</td>
+					<td>{{ userData.KelasData.NamaKelas }}</td>
 					<td>{{ userData.Gender }}</td>
 					<td>{{ userData.Religion }}</td>
 					<td>{{ userData.Status }}</td>
@@ -168,9 +174,46 @@
 	th,
 	td {
 		border: 1px solid #ddd;
-		padding: 20px 8px;
+		padding: 30px 15px;
 		text-align: center;
 		border: none;
+	}
+
+	th:first-child {
+		width: 10%; /* NIS */
+	}
+
+	th:nth-child(2) {
+		width: 15%; /* Nama */
+	}
+
+	th:nth-child(3),
+	td:nth-child(3) {
+		width: 15%; /* Email */
+	}
+
+	th:nth-child(4),
+	td:nth-child(4) {
+		width: 10%; /* No-Telpon */
+	}
+
+	th:nth-child(5) {
+		width: 10%; /* Kelas */
+	}
+
+	th:nth-child(6),
+	td:nth-child(6) {
+		width: 10%; /* Jenis Kelamin */
+	}
+
+	th:nth-child(7),
+	td:nth-child(7) {
+		width: 10%; /* Agama */
+	}
+
+	th:nth-child(8),
+	td:nth-child(8) {
+		width: 10%; /* Status */
 	}
 
 	th {
