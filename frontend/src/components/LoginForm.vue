@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import Swal from "sweetalert2";
 import InputText from "primevue/inputtext";
+import FloatLabel from 'primevue/floatlabel';
 
 const nis = ref("");
 const pass = ref("");
@@ -50,14 +51,16 @@ const login = async () => {
       <h1>Login</h1>
       <div class="form-inputs">
         <div class="form-input">
+          <FloatLabel>
           <label for="nis">NIS :</label>
-          <!-- <InputText id="nis" name="nis" v-model="nis" variant="filled" /> -->
           <input v-model="nis" type="number" id="nis" name="nis" />
+          </FloatLabel>
         </div>
         <div class="form-input">
+          <FloatLabel>
           <label for="pass">Passphrase :</label>
-          <!-- <InputText type="password" id="pass" name="pass" v-model="pass" variant="filled" /> -->
           <input v-model="pass" type="password" id="pass" name="pass" />
+          </FloatLabel>
         </div>
       </div>
       <!-- <input type="submit" value="Log-in" /> -->
@@ -71,29 +74,29 @@ const login = async () => {
 <style scoped>
 h1 {
   text-align: center;
-  margin-bottom: 17px;
+  margin-bottom: 20px;
 }
 
 .form-inputs {
   display: flex;
   flex-direction: column;
+  gap: 35px;
+  margin-bottom: 20px;
   /* align-items: center; */
 }
 
 .form-input {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   /* align-items: center; */
 }
 
-.form-input label {
-  margin-bottom: 10px;
-}
 
 .form-input input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
   border: 1px solid #ccc;
   border-radius: 5px;
 }
