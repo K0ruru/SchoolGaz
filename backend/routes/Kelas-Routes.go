@@ -13,6 +13,7 @@ func KelasRoutes(router *gin.Engine){
     KelasGroup.GET("/",handlers.GetAllKelas)
     KelasGroup.POST("/add",handlers.CreateKelas)
     KelasGroup.GET("/:id_kelas", handlers.GetKelas)
+    KelasGroup.PUT("/:id_kelas", handlers.UpdateKelas)
   
   } 
   
