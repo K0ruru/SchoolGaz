@@ -40,14 +40,15 @@ func AutoMigrate(db *gorm.DB) error {
 	if err := db.AutoMigrate(&Kelas{}).Error; err != nil {
 		return err
 	}
-	if err := db.AutoMigrate(&Tugas{}); err != nil {
-		panic(err)
+	if err := db.AutoMigrate(&Tugas{}).Error; err != nil {
+		return err
 	}
-	if err := db.AutoMigrate(&uploadTugas{}); err != nil {
-		panic(err)
+	if err := db.AutoMigrate(&uploadTugas{}).Error; err != nil {
+		return err
 	}
-	if err := db.AutoMigrate(&Jawaban{}); err != nil {
-		panic(err)
+	if err := db.AutoMigrate(&Jawaban{}).Error; err != nil {
+		return err
+
 	}
 
 	var constraintExists bool

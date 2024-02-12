@@ -5,7 +5,7 @@ import (
 )
 
 type Tugas struct {
-	ID        int64     `gorm:"primaryKey" json:"id"`
+	Id_tugas  int64     `gorm:"primaryKey" json:"id_tugas"`
 	Judul     string    `gorm:"type:varchar(25)" json:"judul"`
 	Deskripsi string    `gorm:"type:text" json:"deskripsi"`
 	Pembuatan time.Time `json:"pembuatan"`
