@@ -14,7 +14,28 @@
 	const email = ref(userData.Email);
 	const noTelp = ref(userData.No_telp);
 	const jenkel = ref(userData.Gender);
+	const kelas = ref(userData.Kelas);
 	const agama = ref(userData.Religion);
+
+	interface Kelas {
+		Id_kelas: number;
+		NamaKelas: string;
+		Walas: {
+			NIS: number;
+			NamaGuru: string;
+		};
+	}
+
+	const kelasData = ref<Kelas[]>([]);
+
+	axios
+		.get("http://localhost:8080/kelas/")
+		.then((response) => {
+			kelasData.value = response.data;
+		})
+		.catch((error) => {
+			console.error("Error fetching kelas data:", error);
+		});
 
 	const saveChanges = async () => {
 		try {
@@ -27,6 +48,7 @@
 					no_telp: noTelp.value,
 					gender: jenkel.value,
 					religion: agama.value,
+					kelas: kelas.value,
 					status: selectedStatus.value,
 				}
 			);
@@ -58,9 +80,13 @@
 <template>
 	<div class="edit-form-overlay">
 		<div class="edit-form-container">
-			<button class="close-button" @click="emits('closeEditForm')">X</button>
 			<form @submit.prevent="saveChanges">
-				<h1>Edit Profile</h1>
+				<div class="form-heading">
+					<h1>Edit Profile</h1>
+					<button class="close-button" @click="emits('closeEditForm')">
+						<ion-icon name="close"></ion-icon>
+					</button>
+				</div>
 				<div class="form-inputs">
 					<div class="form-input">
 						<label for="nis">NIS :</label>
@@ -73,6 +99,10 @@
 					<div class="form-input">
 						<label for="email">E-mail :</label>
 						<input v-model="email" type="email" id="email" name="email" />
+					</div>
+					<div class="form-input">
+						<label for="notelp">No-Telp :</label>
+						<input v-model="noTelp" type="number" id="notelp" name="notelp" />
 					</div>
 					<div class="form-input">
 						<label for="status">Status :</label>
@@ -101,6 +131,18 @@
 							<option value="Khonghucu">Khonghucu</option>
 						</select>
 					</div>
+					<div class="form-input">
+						<label for="kelas">Kelas :</label>
+						<select v-model="kelas" id="kelas" name="kelas">
+							<option
+								v-for="kelasItem in kelasData"
+								:key="kelasItem.Id_kelas"
+								:value="kelasItem.Id_kelas"
+							>
+								{{ kelasItem.NamaKelas }}
+							</option>
+						</select>
+					</div>
 				</div>
 				<button class="button" @click="saveChanges">Save Changes</button>
 			</form>
@@ -127,6 +169,10 @@
 		padding: 20px;
 		border-radius: 8px;
 		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		width: 40%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 	.container-center {
 		display: flex;
@@ -136,8 +182,14 @@
 	}
 
 	form {
-		max-width: 400px;
+		max-width: 600px;
 		width: 100%;
+	}
+
+	.form-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 	}
 
 	.form-inputs {
@@ -182,8 +234,33 @@
 		outline: none;
 		border: none;
 		width: 100%;
-		margin-top: 10px;
+		margin-top: 30px;
 		margin-bottom: 10px;
+		cursor: pointer;
+	}
+
+	.close-button {
+		border: none;
+		background-color: white;
+		font-size: 35px;
+		color: gray;
+		cursor: pointer;
+	}
+
+	label {
+		display: block;
+		margin-top: 3px;
+		margin-bottom: 2px;
+		font-size: 12px;
+	}
+
+	select {
+		width: 100%;
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-size: 15px;
 		cursor: pointer;
 	}
 </style>

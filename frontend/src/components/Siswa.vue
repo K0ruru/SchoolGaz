@@ -2,8 +2,7 @@
 	import Navbar from "./Navbar.vue";
 	import Swal from "sweetalert2";
 	import EditForm from "./EditForm.vue";
-	import { ref, onMounted } from "vue";
-	// computed
+	import { ref, onMounted, computed } from "vue";
 
 	interface UserData {
 		NIS: number;
@@ -13,10 +12,15 @@
 		Religion: string;
 		No_telp: number;
 		Status: string;
+		[key: string]: number | string;
 	}
 
 	const search = ref("");
 	const data = ref<Array<UserData>>([]);
+	const sorting = ref<{ column: string; direction: string | null }>({
+		column: "NIS",
+		direction: null,
+	});
 
 	const fetchData = async () => {
 		try {
@@ -49,7 +53,6 @@
 				});
 
 				if (response.ok) {
-					// Remove the deleted user from the data array
 					data.value = data.value.filter((userData) => userData.NIS !== nis);
 					Swal.fire("Deleted!", "User has been deleted.", "success");
 					console.log(`User with NIS ${nis} deleted successfully.`);
@@ -58,7 +61,6 @@
 					Swal.fire("Error!", "Failed to delete user.", "error");
 				}
 			} else {
-				// Handle cancellation
 				console.log("Deletion cancelled.");
 			}
 		} catch (error) {
@@ -67,34 +69,44 @@
 		}
 	};
 
-	const filterKey = ref("name");
-
-	// const filteredData = computed(() => {
-	// 	return data.value.filter((userData) => {
-	// 		const key = filterKey.value;
-	// 		if (
-	// 			Object.prototype.hasOwnProperty.call(userData, key) &&
-	// 			typeof userData[key as keyof typeof userData] === "string"
-	// 		) {
-	// 			return (userData[key as keyof typeof userData] as string)
-	// 				.toLowerCase()
-	// 				.includes(search.value.toLowerCase());
-	// 		}
-	// 		return false;
-	// 	});
-	// });
-
 	const editFormVisible = ref(false);
 	const selectedUserData = ref<UserData | null>(null);
 
 	const showEditForm = (userData: UserData) => {
-		// Assigning a new object to selectedUserData to ensure reactivity
 		selectedUserData.value = { ...userData };
 		editFormVisible.value = true;
 	};
 
 	const closeEditForm = () => {
 		editFormVisible.value = false;
+	};
+
+	const filteredData = computed(() => {
+		const searchTerm = search.value.toLowerCase();
+		return data.value.filter(
+			(userData) =>
+				userData.NIS.toString().includes(searchTerm) ||
+				userData.Nama.toLowerCase().includes(searchTerm) ||
+				userData.Email.toLowerCase().includes(searchTerm) ||
+				userData.Gender.toLowerCase().includes(searchTerm) ||
+				userData.Religion.toLowerCase().includes(searchTerm) ||
+				userData.No_telp.toString().includes(searchTerm) ||
+				userData.Status.toLowerCase().includes(searchTerm)
+		);
+	});
+
+	const sortTable = (column: string) => {
+		const isAsc =
+			sorting.value.column === column && sorting.value.direction === "asc";
+		sorting.value.column = column;
+		sorting.value.direction = isAsc ? "desc" : "asc";
+
+		data.value.sort((a, b) => {
+			const modifier = isAsc ? 1 : -1;
+			if (a[column] < b[column]) return -modifier;
+			if (a[column] > b[column]) return modifier;
+			return 0;
+		});
 	};
 </script>
 
@@ -108,33 +120,22 @@
 		<Navbar />
 		<div class="search">
 			<input v-model="search" placeholder="Search..." class="input-search" />
-			<div class="filter-dropdown">
-				<label for="filterKey">Filter by:</label>
-				<select v-model="filterKey" id="filterKey">
-					<option value="nis">NIS</option>
-					<option value="name">Name</option>
-					<option value="email">E-mail</option>
-					<option value="gender">Jenis Kelamin</option>
-					<option value="religion">Agama</option>
-					<option value="status">Status</option>
-				</select>
-			</div>
 		</div>
 		<table>
 			<thead>
 				<tr>
-					<th>NIS</th>
-					<th>Nama</th>
-					<th>E-mail</th>
-					<th>No-Telpon</th>
-					<th>Jenis Kelamin</th>
-					<th>Agama</th>
-					<th>Status</th>
+					<th @click="sortTable('NIS')">NIS</th>
+					<th @click="sortTable('Nama')">Nama</th>
+					<th @click="sortTable('Email')">E-mail</th>
+					<th @click="sortTable('No_telp')">No-Telpon</th>
+					<th @click="sortTable('Gender')">Jenis Kelamin</th>
+					<th @click="sortTable('Religion')">Agama</th>
+					<th @click="sortTable('Status')">Status</th>
 					<th>Action</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="userData in data" :key="userData.NIS">
+				<tr v-for="userData in filteredData" :key="userData.NIS">
 					<td>{{ userData.NIS }}</td>
 					<td>{{ userData.Nama }}</td>
 					<td>{{ userData.Email }}</td>
@@ -224,6 +225,12 @@
 	th {
 		background-color: #0000ff;
 		color: #fff;
+		cursor: pointer;
+		transition: 0.3s all ease-in-out;
+	}
+
+	th:hover {
+		background-color: rgb(0, 0, 211);
 	}
 
 	td {
