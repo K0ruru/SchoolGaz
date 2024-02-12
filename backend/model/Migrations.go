@@ -40,6 +40,15 @@ func AutoMigrate(db *gorm.DB) error {
 	if err := db.AutoMigrate(&Kelas{}).Error; err != nil {
 		return err
 	}
+	if err := db.AutoMigrate(&Tugas{}); err != nil {
+		panic(err)
+	}
+	if err := db.AutoMigrate(&uploadTugas{}); err != nil {
+		panic(err)
+	}
+	if err := db.AutoMigrate(&Jawaban{}); err != nil {
+		panic(err)
+	}
 
 	var constraintExists bool
 	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'kelas_walas_nis_gurus_nis_foreign' AND table_name = 'kelas')").Row().Scan(&constraintExists); err != nil {
