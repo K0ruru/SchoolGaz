@@ -1,6 +1,6 @@
-package models
+package model
 
-import "server/database"
+import "server/db"
 
 type uploadTugas struct {
 	ID   int64   `gorm:"primaryKey" json:"id"`
@@ -9,7 +9,7 @@ type uploadTugas struct {
 }
 
 func AutoMigrateUploadTugas() {
-	if err := database.DB.AutoMigrate(&uploadTugas{}); err != nil {
+	if err := db.DB.AutoMigrate(&uploadTugas{}); err != nil {
 		panic(err)
 	}
 }

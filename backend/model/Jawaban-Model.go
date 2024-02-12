@@ -1,7 +1,7 @@
-package models
+package model
 
 import (
-	"server/database"
+	"server/db"
 	"time"
 )
 
@@ -15,7 +15,7 @@ type Jawaban struct {
 }
 
 func AutoMigrateJawaban() {
-	if err := database.DB.AutoMigrate(&Jawaban{}); err != nil {
+	if err := db.DB.AutoMigrate(&Jawaban{}); err != nil {
 		panic(err)
 	}
 }
