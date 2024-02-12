@@ -12,7 +12,24 @@
 		Gender: string;
 	}
 
+	interface KelasWalas {
+		Id_kelas: number;
+		NamaKelas: string;
+		WalasNIS: number;
+		Walas: {
+			NIS: number;
+			NamaGuru: string;
+			Email: string;
+			NoTelp: number;
+			Gender: string;
+			Religion: string;
+			Profilepicture: string;
+		};
+	}
+
 	const siswaData = ref<Siswa[]>([]);
+	const kelasWalasData = ref<KelasWalas | null>(null);
+
 	const route = useRoute();
 
 	onMounted(async () => {
@@ -32,6 +49,18 @@
 			console.error("Error fetching data:", error);
 		}
 	});
+
+	onMounted(async () => {
+		const kelasId = route.params.id;
+
+		try {
+			const response = await axios.get(
+				`http://localhost:8080/kelas/${kelasId}`
+			);
+
+			kelasWalasData.value = response.data;
+		} catch (error) {}
+	});
 </script>
 
 <template>
@@ -39,29 +68,36 @@
 		<Navbar />
 		<div class="kelas-content">
 			<div class="walas-container">
-				<div class="profile-information">
-					<img src="../assets/Doge hehe.jpg" alt="" class="profile-picture" />
+				<div v-if="kelasWalasData" class="profile-information">
+					<img
+						v-if="kelasWalasData.Walas.Profilepicture"
+						:src="kelasWalasData.Walas.Profilepicture"
+						alt=""
+						class="profile-picture"
+					/>
+					<img
+						v-else
+						src="../assets/Doge hehe.jpg"
+						alt=""
+						class="profile-picture"
+					/>
 					<p class="nis">001002003</p>
 					<div class="profile-info-container">
 						<div class="profile-info">
 							<p>Nama :</p>
-							<p>Doge</p>
-						</div>
-						<div class="profile-info">
-							<p>Kelas :</p>
-							<p>XI - RPL</p>
+							<p>{{ kelasWalasData.Walas.NamaGuru }}</p>
 						</div>
 						<div class="profile-info">
 							<p>Email :</p>
-							<p>Dogeisthebest@gmail.com</p>
+							<p>{{ kelasWalasData.Walas.Email }}</p>
 						</div>
 						<div class="profile-info">
 							<p>Gender :</p>
-							<p>Doge</p>
+							<p>{{ kelasWalasData.Walas.Gender }}</p>
 						</div>
 						<div class="profile-info">
 							<p>Agama :</p>
-							<p>The Religion Of Doge</p>
+							<p>{{ kelasWalasData.Walas.Religion }}</p>
 						</div>
 						<div class="profile-info">
 							<p>Bidang :</p>

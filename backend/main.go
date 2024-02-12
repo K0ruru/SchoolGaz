@@ -1,15 +1,15 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
-    "server/db"
-    "server/routes"
+	"fmt"
+	"net/http"
+	"server/db"
+	"server/routes"
 
-    "server/model"
+	"server/model"
 
-    "github.com/gin-contrib/cors"
-    "github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
