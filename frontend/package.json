@@ -17,6 +17,8 @@
 		"ip": "^2.0.0",
 		"pac-proxy-agent": "^1.0.0",
 		"pac-resolver": "^1.2.6",
+		"primeicons": "^6.0.1",
+		"primevue": "^3.48.1",
 		"proxy-agent": "^2.0.0",
 		"sweetalert2": "^11.10.5",
 		"vue": "^3.3.11",

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 	import Navbar from "./Navbar.vue";
-	import Swal from "sweetalert2";
 	import EditForm from "./EditForm.vue";
+	import Toast from "primevue/toast";
+	import ConfirmPopup from "primevue/confirmpopup";
+	import axios from "axios";
 	import { ref, onMounted, computed } from "vue";
+	import { useConfirm } from "primevue/useconfirm";
+	import { useToast } from "primevue/usetoast";
 
 	interface UserData {
 		NIS: number;
@@ -40,37 +44,61 @@
 		fetchData();
 	});
 
-	const hapusData = async (nis: number) => {
-		try {
-			const result = await Swal.fire({
-				title: "Are you sure?",
-				text: "You will not be able to recover this user!",
-				icon: "warning",
-				showCancelButton: true,
-				confirmButtonText: "Yes, delete it!",
-				cancelButtonText: "Cancel",
-				confirmButtonColor: "#ff0000",
-			});
-			if (result.isConfirmed) {
-				const response = await fetch(`http://localhost:8080/Auth/del/${nis}`, {
-					method: "DELETE",
-				});
+	const confirm = useConfirm();
+	const toast = useToast();
 
-				if (response.ok) {
-					data.value = data.value.filter((userData) => userData.NIS !== nis);
-					Swal.fire("Deleted!", "User has been deleted.", "success");
-					console.log(`User with NIS ${nis} deleted successfully.`);
-				} else {
-					console.error(`Failed to delete user with NIS ${nis}.`);
-					Swal.fire("Error!", "Failed to delete user.", "error");
+	const hapusData = (event: MouseEvent, nis: number) => {
+		confirm.require({
+			target: event.currentTarget as HTMLElement,
+			message: "Apa anda yaking ingin menghapus ini?",
+			icon: "pi pi-info-circle",
+			rejectClass: "p-button-secondary p-button-outlined p-button-sm",
+			acceptClass: "p-button-danger p-button-sm",
+			rejectLabel: "Cancel",
+			acceptLabel: "Delete",
+			accept: async () => {
+				try {
+					const response = await axios.delete(
+						`http://localhost:8080/Auth/del/${nis}`
+					);
+
+					if (response.status === 200) {
+						data.value = data.value.filter((userData) => userData.NIS !== nis);
+						toast.add({
+							severity: "info",
+							summary: "Confirmed",
+							detail: "Data dihapus",
+							life: 3000,
+						});
+						console.log(`User with NIS ${nis} deleted successfully.`);
+					} else {
+						console.error(`Failed to delete user with NIS ${nis}.`);
+						toast.add({
+							severity: "error",
+							summary: "Error",
+							detail: "Failed to delete user.",
+							life: 3000,
+						});
+					}
+				} catch (error) {
+					console.error("Error deleting user:", error);
+					toast.add({
+						severity: "error",
+						summary: "Error",
+						detail: "Failed to delete user.",
+						life: 3000,
+					});
 				}
-			} else {
-				console.log("Deletion cancelled.");
-			}
-		} catch (error) {
-			console.error("Error deleting user:", error);
-			Swal.fire("Error!", "Failed to delete user.", "error");
-		}
+			},
+			reject: () => {
+				toast.add({
+					severity: "error",
+					summary: "Rejected",
+					detail: "Tidak jadi menghapus data",
+					life: 3000,
+				});
+			},
+		});
 	};
 
 	const editFormVisible = ref(false);
@@ -120,6 +148,8 @@
 		:userData="selectedUserData"
 		@closeEditForm="closeEditForm"
 	/>
+	<Toast />
+	<ConfirmPopup></ConfirmPopup>
 	<div class="container">
 		<Navbar />
 		<div class="search">
@@ -153,7 +183,10 @@
 						<button class="button-edit" @click="showEditForm(userData)">
 							Edit
 						</button>
-						<button class="button-delete" @click="hapusData(userData.NIS)">
+						<button
+							class="button-delete"
+							@click="hapusData($event, userData.NIS)"
+						>
 							Hapus
 						</button>
 					</td>
