@@ -28,7 +28,37 @@ func GetAllKelas(c *gin.Context) {
     c.JSON(http.StatusOK, AllKelas)
 }
 
-
+func GetKelas(c *gin.Context) {
+    var kelas model.Kelas
+    ID := c.Param("id_kelas")
+    
+    kelasID, err := strconv.Atoi(ID)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id_kelas"})
+        fmt.Println(err)
+        return
+    }
+    
+    // Fetch the kelas with the given ID
+    if err := dbConn.First(&kelas, kelasID).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        fmt.Println(err)
+        return
+    }
+    
+    // Fetch associated Walas for the Kelas
+    var walas model.Guru
+    if err := dbConn.First(&walas, kelas.WalasNIS).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        fmt.Println(err)
+        return
+    }
+    // Exclude passphrase from Walas object
+    walas.Passphrase = ""
+    kelas.Walas = walas
+    
+    c.JSON(http.StatusOK, kelas)
+}
 
 func CreateKelas(c *gin.Context) {
     var NewKelas model.Kelas
@@ -51,146 +81,54 @@ func CreateKelas(c *gin.Context) {
     c.JSON(http.StatusOK, NewKelas)
 }
 
-func GetKelas(c *gin.Context) {
-    var kelas model.Kelas
-    ID := c.Param("id_kelas")
+func UpdateKelas(c *gin.Context) {
+    if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
+		return
+	}
 
-    kelasID, err := strconv.Atoi(ID)
+    kelasID := c.Param("id_kelas")
+
+    _, err := strconv.Atoi(kelasID)
     if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id_kelas"})
-        fmt.Println(err)
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid kelasID"})
         return
     }
+    var updateKelas model.Kelas
 
-    // Fetch the kelas with the given ID
-    if err := dbConn.First(&kelas, kelasID).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        fmt.Println(err)
-        return
+    if err := dbConn.Where("Id_kelas = $1", kelasID).First(&updateKelas).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
     }
 
-    // Fetch associated Walas for the Kelas
-    var walas model.Guru
-    if err := dbConn.First(&walas, kelas.WalasNIS).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        fmt.Println(err)
-        return
-    }
-    // Exclude passphrase from Walas object
-    walas.Passphrase = ""
-    kelas.Walas = walas
-
-    c.JSON(http.StatusOK, kelas)
-}
-/*
-func GetKelas(c *gin.Context) {
-    id := c.Param("id") // ambil id nya dari url 
-
-    //cek kalau id nya ada
-    kelasID, err := strconv.Atoi(id)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id_kelas"})
-        return
-    }
-
-    row := dbConn.QueryRow("SELECT kelas.*, users.nama FROM kelas JOIN users ON kelas.walas = users.nis WHERE kelas.id_kelas = $1", kelasID)
-
-    var kelas Kelas
-
-    err = row.Scan(&kelas.ID, &kelas.Walas, &kelas.Nama_kelas, &kelas.NamaWalas)
-    if err != nil {
-        if err == sql.ErrNoRows {
-            c.JSON(http.StatusNotFound, gin.H{"error": "Kelas not found"})
-            return
-        }
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get kelas"})
-        fmt.Println(err)
-        return
-    }
-
-    c.JSON(http.StatusOK, kelas)
-}
-
-func CreateKelas(c *gin.Context) {
-    var kelasBaru Kelas
-
-    if err := c.ShouldBindJSON(&kelasBaru); err != nil {
+    if err := c.ShouldBindJSON(&updateKelas); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        fmt.Println(err)
     }
 
-    _, err := dbConn.Exec("INSERT INTO kelas(walas, nama_kelas) VALUES ($1, $2)", kelasBaru.Walas, kelasBaru.Nama_kelas)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        fmt.Println(err)
-        return
+    if err := dbConn.Save(&updateKelas).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error})
     }
 
-    c.JSON(http.StatusCreated, kelasBaru)
-}
-
-func EditKelas(c *gin.Context) {
-    id := c.Param("id")
-
-    //cek id nya
-    kelasID, err := strconv.Atoi(id)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id_kelas"})
-        return
-    }
-
-    // ambil data kelasnya yang lama
-    existingKelas := Kelas{}
-    err = dbConn.QueryRow("SELECT id_kelas, walas, nama_kelas FROM kelas WHERE id_kelas = $1", kelasID).
-        Scan(&existingKelas.ID, &existingKelas.Walas, &existingKelas.Nama_kelas)
-    if err != nil {
-        if err == sql.ErrNoRows {
-            c.JSON(http.StatusNotFound, gin.H{"error": "Kelas not found"})
-            return
-        }
-    c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get kelas"})
-    fmt.Println(err)
-    return
-}
-
-    // Bind data jsonnya ke struct
-    if err := c.ShouldBindJSON(&existingKelas); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        fmt.Println(err)
-        return
-    }
-
-    // execute updatenya dengan data yang ka ganti aman aman aja
-    _, err = dbConn.Exec("UPDATE kelas SET walas=$1, nama_kelas=$2 WHERE id_kelas=$3", existingKelas.Walas, existingKelas.Nama_kelas, kelasID)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        fmt.Println(err)
-        return
-    }
-
-    existingKelas.ID = kelasID
-    c.JSON(http.StatusOK, existingKelas)
+    c.JSON(http.StatusOK, updateKelas)
 }
 
 func DeleteKelas(c *gin.Context) {
-    id := c.Param("id")
+    if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
+		return
+	}
 
+    kelasID := c.Param("id_kelas")
 
-    kelasID, err := strconv.Atoi(id)
+    _, err := strconv.Atoi(kelasID)
     if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id_kelas"})
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid kelasID"})
         return
     }
+    var deleteKelas model.Kelas
 
-
-    _, err = dbConn.Exec("DELETE FROM kelas WHERE id_kelas = $1", kelasID)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete kelas"})
-        fmt.Println(err)
-        return
+    if err := dbConn.Where("Id_kelas = $1", kelasID).Delete(&deleteKelas).Error; err!= nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
     }
 
-    c.JSON(http.StatusOK, gin.H{"message": "Kelas deleted successfully"})
+    c.JSON(http.StatusOK, gin.H{"success": "kelas deleted"})
 }
-
-*/

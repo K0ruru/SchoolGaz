@@ -65,6 +65,7 @@ func CreateUser(c *gin.Context) {
     // Return success response
     c.JSON(http.StatusCreated, newUser)
 }
+
 func UpdateUser(c *gin.Context) {
 	if dbConn == nil {
 		// Handle the case where dbConn is nil
@@ -169,7 +170,7 @@ func LoginUser(c *gin.Context) {
 
 	// Retrieve the user from the database
 	if err := dbConn.First(&login, "NIS = ?", body.NIS).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot find login info"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
 
