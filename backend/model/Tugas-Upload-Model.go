@@ -1,7 +1,12 @@
 package model
 
-type uploadTugas struct {
-	ID   int64  `gorm:"primaryKey" json:"id"`
+import (
+	"gorm.io/gorm"
+)
+
+type UploadTugas struct {
+	gorm.Model
+
 	Name string `gorm:"type:varchar(25)" json:"name"`
 	File string `json:"file"`
 }

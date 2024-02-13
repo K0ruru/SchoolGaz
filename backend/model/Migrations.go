@@ -3,6 +3,7 @@ package model
 import "github.com/jinzhu/gorm"
 
 func AutoMigrate(db *gorm.DB) error {
+
 	// Check if the custom enum type exists
 	var typeStatusExists bool
 	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'status_enum')").Row().Scan(&typeStatusExists); err != nil {
@@ -43,16 +44,15 @@ func AutoMigrate(db *gorm.DB) error {
 	if err := db.AutoMigrate(&Tugas{}).Error; err != nil {
 		return err
 	}
-  
-	if err := db.AutoMigrate(&uploadTugas{}).Error; err != nil {
+	if err := db.AutoMigrate(&UploadTugas{}).Error; err != nil {
 		return err
 	}
 	if err := db.AutoMigrate(&Jawaban{}).Error; err != nil {
 		return err
 	}
-  if err := db.AutoMigrate(&Mapel{}).Error; err != nil {
-    return err
-  }
+	if err := db.AutoMigrate(&Mapel{}).Error; err != nil {
+		return err
+	}
 
 	var constraintExists bool
 	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'kelas_walas_nis_gurus_nis_foreign' AND table_name = 'kelas')").Row().Scan(&constraintExists); err != nil {
