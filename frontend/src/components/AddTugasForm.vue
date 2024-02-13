@@ -9,6 +9,9 @@ import Calendar from "primevue/calendar";
 <template>
   <div class="container">
     <Navbar />
+    <div class="button-add">
+      <button>Tambah Tugas</button>
+    </div>
     <div class="form-container">
       <div class="form-inputs-container">
         <div class="form-inputs">
@@ -17,7 +20,7 @@ import Calendar from "primevue/calendar";
             <input type="email" id="email" name="email" />
 
             <label for="fullName">Dead line</label>
-            <input type="text" id="fullName" name="fullName" />
+            <!-- <input type="text" id="fullName" name="fullName" /> -->
             <Calendar showIcon :showOnFocus="false" />
 
             <label for="photo">File</label>
@@ -37,6 +40,33 @@ import Calendar from "primevue/calendar";
 </template>
 
 <style scoped>
+.button-add {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.button-add  button{
+  margin-top: 20px;
+  background-color: blue;
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  padding: 10px;
+  font-weight: 600;
+}
+.button-add  button:hover{
+  margin-top: 20px;
+  background-color: darkblue;
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  padding: 10px;
+  font-weight: 600;
+}
+
+
+
 .editor {
   display: flex;
   flex-direction: column;
