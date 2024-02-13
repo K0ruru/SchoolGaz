@@ -74,14 +74,12 @@ func AutoMigrate(db *gorm.DB) error {
 			return err
 		}
 	}
-
-	var fkBidangGuru bool
-	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'gurus_mapel_mapels_id_mapel_foreign' AND table_name = 'gurus')").Row().Scan(&fkBidangGuru); err != nil {
+	var fkMapelTugas bool
+	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'tugas_id_mapel_mapels_id_mapel_foreign' AND table_name = 'tugas')").Row().Scan(&fkMapelTugas); err != nil {
 		return err
 	}
-
-	if !fkBidangGuru {
-		if err := db.Model(&Guru{}).AddForeignKey("mapel", "mapels(Id_mapel)", "SET NULL", "CASCADE").Error; err != nil {
+	if !fkMapelTugas {
+		if err := db.Model(&Tugas{}).AddForeignKey("id_mapel", "Mapels(id_mapel)", "CASCADE", "CASCADE").Error; err != nil {
 			return err
 		}
 	}
