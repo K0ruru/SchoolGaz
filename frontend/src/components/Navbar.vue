@@ -29,13 +29,8 @@
 				<a href="#" class="menu-item"
 					><ion-icon name="ellipse"></ion-icon> Online</a
 				>
-				<!-- <a href="#" class="menu-item" :class="{ active: tabAktif === 'Dashboard' }" @click="navigasi('')">Home</a> -->
-				<!-- <a href="#" class="menu-item" :class="{ active: tabAktif === 'siswa' }" @click="navigasi('siswa')">Students</a> -->
-				<!-- <a href="#" class="menu-item" :class="{ active: tabAktif === 'guru' }" @click="navigasi('guru')">Teachers</a> -->
-				<!-- <a href="#" class="menu-item" :class="{ active: tabAktif === 'tugas' }" @click="navigasi('tugas')">Assignments</a> -->
 			</div>
 		</div>
-		<!-- <div class="profile-section">PROFILE</div> -->
 		<div class="profile-dropdown">
 			<div class="profile-section">PROFILE</div>
 			<div class="dropdown-content">
