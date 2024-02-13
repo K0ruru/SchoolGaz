@@ -32,38 +32,38 @@ func init() {
 }
 
 func CreateUser(c *gin.Context) {
-    if dbConn == nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
-        return
-    }
+	if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
+		return
+	}
 
-    var newUser model.User
-    if err := c.ShouldBindJSON(&newUser); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
-        fmt.Println(err)
-        return
-    }
+	var newUser model.User
+	if err := c.ShouldBindJSON(&newUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		fmt.Println(err)
+		return
+	}
 
-    // Hash the password using bcrypt
-    hash, err := bcrypt.GenerateFromPassword([]byte(newUser.Passphrase), 10)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Error hashing password"})
-        fmt.Println(err)
-        return
-    }
+	// Hash the password using bcrypt
+	hash, err := bcrypt.GenerateFromPassword([]byte(newUser.Passphrase), 10)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error hashing password"})
+		fmt.Println(err)
+		return
+	}
 
-    // Store the hashed password in the newUser object
-    newUser.Passphrase = string(hash)
+	// Store the hashed password in the newUser object
+	newUser.Passphrase = string(hash)
 
-    // Create the user in the database
-    if err := dbConn.Create(&newUser).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
-        fmt.Println(err)
-        return
-    }
+	// Create the user in the database
+	if err := dbConn.Create(&newUser).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		fmt.Println(err)
+		return
+	}
 
-    // Return success response
-    c.JSON(http.StatusCreated, newUser)
+	// Return success response
+	c.JSON(http.StatusCreated, newUser)
 }
 
 func UpdateUser(c *gin.Context) {
@@ -91,14 +91,14 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	  // Hash the password using bcrypt
-    hash, err := bcrypt.GenerateFromPassword([]byte(Updateuser.Passphrase), 10)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Error hashing password"})
-        fmt.Println(err)
-        return
-    }
-  Updateuser.Passphrase = string(hash)
+	// Hash the password using bcrypt
+	hash, err := bcrypt.GenerateFromPassword([]byte(Updateuser.Passphrase), 10)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error hashing password"})
+		fmt.Println(err)
+		return
+	}
+	Updateuser.Passphrase = string(hash)
 
 	// Update user in the database
 	if err := dbConn.Save(&Updateuser).Error; err != nil {
@@ -177,7 +177,7 @@ func LoginUser(c *gin.Context) {
 	// Compare the provided password with the hashed password from the database
 	if err := bcrypt.CompareHashAndPassword([]byte(login.Passphrase), []byte(body.Passphrase)); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password"})
-    fmt.Println(err)
+		fmt.Println(err)
 		return
 	}
 
@@ -242,17 +242,10 @@ func UploadProfilePicture(c *gin.Context) {
 
 	// Update the user's Profilepicture field with the filename
 	if err := dbConn.Model(&model.User{}).Where("NIS = ?", nis).Update("Profilepicture", fileName).Error; err != nil {
-    c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user profile picture"})
-    return
-}
-
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user profile picture"})
+		return
+	}
 
 	// Return success response
 	c.JSON(http.StatusOK, gin.H{"message": "Profile picture uploaded successfully"})
 }
-
-
-
-
-
-

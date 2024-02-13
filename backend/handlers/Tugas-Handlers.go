@@ -3,33 +3,41 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"server/db"
 	"server/model"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 )
 
 func IndexTugas(c *gin.Context) {
+	if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error connection or from the server error"})
+		return
+	}
 	var tugas []model.Tugas
-	db.DB.Find(&tugas)
-	c.JSON(http.StatusOK, gin.H{"tugas": tugas})
+	if err := dbConn.Find(&tugas).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot find tugas"})
+		return
+	}
+	c.JSON(http.StatusOK, tugas)
 }
 
-func ShowTugas(c *gin.Context) {
-	var tugas []model.Tugas
-	id_tugas := c.Param("id_tugas")
-
-	if err := db.DB.First(&tugas, id_tugas).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "data tidak ditemukan"})
-			return
-		} else {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-			return
-		}
+func GetTugas(c *gin.Context) {
+	if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"ERROR": "database connection error, or from the server error"})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{"tugas": tugas})
+
+	id := c.Param("id")
+	var Gettugas model.Tugas
+
+	if err := dbConn.Where("id = ?", id).First(&Gettugas).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Tugas no found"})
+		fmt.Println(err)
+		return
+	}
+	c.JSON(http.StatusCreated, Gettugas)
+
 }
 
 func CreateTugas(c *gin.Context) {
@@ -46,23 +54,35 @@ func CreateTugas(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"tugas": tugas})
+	c.JSON(http.StatusOK, tugas)
 }
 
 func UpdateTugas(c *gin.Context) {
-	var tugas model.Tugas
-	id_tugas := c.Param("id_tugas")
 
-	if err := c.ShouldBindJSON(&tugas); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		fmt.Println(err)
+	var tugas model.Tugas
+	id := c.Param("id")
+
+	if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
 		return
 	}
 
-	if db.DB.Model(&tugas).Where("id_tugas=?", id_tugas).Updates(&tugas).RowsAffected == 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Tidak dapat mengedit"})
-		fmt.Println(err)
+	_, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
 		return
+	}
+
+	if err := dbConn.Where("id = $1", id).First(&tugas).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	}
+
+	if err := c.ShouldBindJSON(&tugas); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	if err := dbConn.Save(&tugas).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error})
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Data Berhasil di edit"})
@@ -71,27 +91,22 @@ func UpdateTugas(c *gin.Context) {
 func DeleteTugas(c *gin.Context) {
 	var tugas model.Tugas
 
-	// Get tugas ID from URL parameter
-	id_tugas := c.Param("id_tugas")
+	id := c.Param("id")
 
-	// Find the tugas by ID
-	if err := db.DB.First(&tugas, id_tugas).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": "Tugas tidak ditemukan"})
+	if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
 		return
 	}
 
-	// Begin transaction
-	tx := db.DB.Begin()
-
-	// Delete tugas from database
-	if err := tx.Delete(&tugas).Error; err != nil {
-		tx.Rollback() // Rollback transaction if there's an error
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal menghapus tugas dari database"})
+	_, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
 		return
 	}
 
-	// Commit transaction if deletion is successful
-	tx.Commit()
+	if err := dbConn.Where("id = $1", id).Delete(&tugas).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Data berhasil dihapus"})
+	c.JSON(http.StatusOK, gin.H{"success": "tugas berhasil di delete"})
 }

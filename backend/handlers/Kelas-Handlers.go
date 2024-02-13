@@ -66,7 +66,7 @@ func CreateKelas(c *gin.Context) {
     // Bind JSON body to Kelas struct
     if err := c.ShouldBindJSON(&NewKelas); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        fmt.Println(err)
+        fmt.Println(err  )
         return
     }
 
