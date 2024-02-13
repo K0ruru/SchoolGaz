@@ -50,10 +50,10 @@ func GetFile(c *gin.Context) {
 		return
 	}
 
-	id := c.Param("id")
+	id_UT := c.Param("id_UT")
 	var Getfile model.UploadTugas
 
-	if err := dbConn.Where("id = ?", id).First(&Getfile).Error; err != nil {
+	if err := dbConn.Where("id_UT = ?", id_UT).First(&Getfile).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user no found"})
 		fmt.Println(err)
 		return
@@ -124,3 +124,4 @@ func UploadToCloudinary(ctx context.Context, file multipart.File, filename strin
 
 	return uploadResult, nil
 }
+

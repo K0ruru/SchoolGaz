@@ -48,6 +48,7 @@ func main() {
 	routes.MapelRoutes(router)
 	routes.GuruRoutes(router)
 	routes.TugasRoutes(router)
+	routes.JawabanRoutes(router)
 
 	handlers.InitCloudinary()
 
