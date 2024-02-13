@@ -11,6 +11,7 @@ import Profile from "./components/Profile.vue";
 import Tugas from "./components/Tugas.vue";
 import AddTugas from "./components/AddTugas.vue";
 import AddTugasForm from "./components/AddTugasForm.vue";
+import Cropper from "./components/ProfilePictureForm.vue";
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -68,6 +69,10 @@ const routes: Array<RouteRecordRaw> = [
 		name: "kelas",
 		component: Kelas,
 		meta: { requiresAuth: true },
+	},
+	{
+		path: "/cek",
+		component: Cropper,
 	},
 ];
 

@@ -3,6 +3,7 @@
 	import Navbar from "./Navbar.vue";
 	import { ref, onMounted } from "vue";
 	import { useRouter, useRoute } from "vue-router";
+	import Cropper from "./ProfilePictureForm.vue";
 
 	const tabAktif = ref("");
 	const router = useRouter();
@@ -45,6 +46,16 @@
 		const normalizedPath = filePath.replace(/\\/g, "/");
 		return `${baseURL}/${normalizedPath}`;
 	};
+
+	const isCropperVisible = ref(false);
+
+	const openCropper = () => {
+		isCropperVisible.value = true;
+	};
+
+	const closeCropper = () => {
+		isCropperVisible.value = false;
+	};
 </script>
 
 <template>
@@ -52,17 +63,20 @@
 		<Navbar />
 		<div class="profile-content">
 			<div class="profile-information">
+				<Cropper v-if="isCropperVisible" @close-cropper="closeCropper" />
 				<img
-					v-if="userData?.Profilepicture"
+					v-if="userData?.Profilepicture && !isCropperVisible"
 					:src="getProfilePictureUrl(userData?.Profilepicture)"
 					alt=""
 					class="profile-picture"
+					@click="openCropper"
 				/>
 				<img
 					v-else
 					src="../assets/Doge hehe.jpg"
 					alt=""
 					class="profile-picture"
+					@click="openCropper"
 				/>
 				<p class="nis">001002003</p>
 				<div class="profile-info">

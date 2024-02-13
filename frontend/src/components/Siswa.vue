@@ -168,7 +168,10 @@
 					<td>{{ userData.Nama }}</td>
 					<td>{{ userData.Email }}</td>
 					<td>{{ userData.No_telp }}</td>
-					<td>{{ userData.KelasData.NamaKelas }}</td>
+					<td v-if="userData.KelasData.NamaKelas">
+						{{ userData.KelasData.NamaKelas }}
+					</td>
+					<td v-else>None</td>
 					<td>{{ userData.Gender }}</td>
 					<td>{{ userData.Religion }}</td>
 					<td>{{ userData.Status }}</td>
