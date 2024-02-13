@@ -70,6 +70,10 @@ func UpdateUser(c *gin.Context) {
 	if dbConn == nil {
 		// Handle the case where dbConn is nil
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
+if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error connection or from the server error"})
+		return
+	}
 		return
 	}
 
