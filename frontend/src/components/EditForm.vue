@@ -1,10 +1,11 @@
 <script setup lang="ts">
 	import { ref, defineProps, defineEmits } from "vue";
+	import { useToast } from "primevue/usetoast";
 	import axios from "axios";
-	import Swal from "sweetalert2";
 
 	const { userData } = defineProps(["userData"]);
 	const emits = defineEmits(["closeEditForm"]);
+	const toast = useToast();
 
 	const statusOptions = ref(["active", "pending"]);
 	const selectedStatus = ref(userData.Status);
@@ -54,25 +55,25 @@
 			);
 
 			if (response.status === 200) {
-				// Data successfully updated
-				const result = await Swal.fire({
-					icon: "success",
-					title: "Success",
-					text: "Data updated successfully!",
-					showConfirmButton: true,
+				emits("closeEditForm"); // Emit the closeEditForm event
+				toast.add({
+					severity: "info",
+					summary: "Confirmed",
+					detail: "Data Berhasil Di-edit",
+					life: 3000,
 				});
-
-				if (result.isConfirmed) {
-					emits("closeEditForm"); // Emit the closeEditForm event
-					window.location.reload();
-				}
 			} else {
 				// Handle other status codes or errors
 				console.error("Failed to update data.");
 			}
 		} catch (error) {
 			console.error("Error updating data:", error);
-			Swal.fire("Error", "Failed to update data. Please try again.", "error");
+			toast.add({
+				severity: "error",
+				summary: "Error",
+				detail: "Terjadi sebuah kesalahan :(",
+				life: 3000,
+			});
 		}
 	};
 </script>
