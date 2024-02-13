@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"server/model"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,6 +27,80 @@ func CreateMapel(c *gin.Context){
   c.JSON(http.StatusCreated,newMapel)
 
 }
+
+func UpdateMapel(c *gin.Context) {
+    if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
+		return
+	}
+
+    ID := c.Param("id_mapel")
+
+    _, err := strconv.Atoi(ID)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid kelasID"})
+        return
+    }
+    var UpdateMapel model.Mapel
+
+    if err := dbConn.Where("id_mapel = $1", ID).First(&UpdateMapel).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+    }
+
+    if err := c.ShouldBindJSON(&UpdateMapel); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    }
+
+    if err := dbConn.Save(&UpdateMapel).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error})
+    }
+
+    c.JSON(http.StatusOK, UpdateMapel)
+}
+func DeleteMapel(c *gin.Context){
+  var DeleteMapel model.Mapel
+
+  if dbConn == nil{
+    c.JSON(http.StatusInternalServerError, gin.H{"error" : "database connection error or from the server error"})
+    return
+  }
+
+  ID := c.Param("id_mapel")
+  if err := dbConn.Where("id_mapel = ?", ID).Delete(&DeleteMapel).Error; err != nil{
+    c.JSON(http.StatusBadRequest,gin.H{"error": "invalid data or can not delete"})
+  }
+  c.JSON(http.StatusOK, gin.H{"succes" : "successfully deleted"})
+}
+func GetALLMapel(c *gin.Context) {
+	if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error connection or from the server error"})
+		return
+	}
+	var GetMapel []model.Mapel
+	if err := dbConn.Find(&GetMapel).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot find user"})
+		return
+	}
+	c.JSON(http.StatusOK, GetMapel)
+}
+func GetMapel(c * gin.Context){
+  if dbConn == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error connection or from the server error"})
+		return
+	}
+var GetMapel model.Mapel
+id := c.Param("id_mapel")
+
+  if err := dbConn.Where("id_mapel = ?", id).First(&GetMapel).Error; err != nil{
+    c.JSON(http.StatusBadRequest, gin.H{"error" : "cannot find mapel"})
+    return
+  }
+  c.JSON(http.StatusOK, GetMapel)
+}
+
+
+
+
 /*
 
 func CreateMapel(c *gin.Context){
