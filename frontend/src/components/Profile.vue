@@ -56,6 +56,19 @@
 	const closeCropper = () => {
 		isCropperVisible.value = false;
 	};
+
+	const showOverlay = ref(false);
+	const showOverlayText = ref(false);
+
+	const onMouseEnter = () => {
+		showOverlay.value = true;
+		showOverlayText.value = true;
+	};
+
+	const onMouseLeave = () => {
+		showOverlay.value = false;
+		showOverlayText.value = false;
+	};
 </script>
 
 <template>
@@ -64,20 +77,28 @@
 		<div class="profile-content">
 			<div class="profile-information">
 				<Cropper v-if="isCropperVisible" @close-cropper="closeCropper" />
-				<img
-					v-if="userData?.Profilepicture && !isCropperVisible"
-					:src="getProfilePictureUrl(userData?.Profilepicture)"
-					alt=""
-					class="profile-picture"
-					@click="openCropper"
-				/>
-				<img
-					v-else
-					src="../assets/Doge hehe.jpg"
-					alt=""
-					class="profile-picture"
-					@click="openCropper"
-				/>
+				<div
+					class="profile-picture-container"
+					@mouseenter="onMouseEnter"
+					@mouseleave="onMouseLeave"
+				>
+					<img
+						v-if="userData?.Profilepicture && !isCropperVisible"
+						:src="getProfilePictureUrl(userData?.Profilepicture)"
+						alt=""
+						class="profile-picture"
+					/>
+					<img
+						v-else
+						src="../assets/Doge hehe.jpg"
+						alt=""
+						class="profile-picture"
+					/>
+					<div v-if="showOverlay" class="overlay" @click="openCropper"></div>
+					<div v-if="showOverlayText" class="overlay-text" @click="openCropper">
+						<ion-icon name="create"></ion-icon>
+					</div>
+				</div>
 				<p class="nis">001002003</p>
 				<div class="profile-info">
 					<p>Nama :</p>
@@ -267,6 +288,41 @@
 
 	.telat:hover {
 		background-color: rgb(212, 0, 0);
+	}
+
+	.profile-picture-container {
+		position: relative;
+		cursor: pointer;
+	}
+
+	.overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 200px;
+		height: 200px;
+		background-color: rgba(128, 128, 128, 0.5);
+		border-radius: 50%;
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+	}
+
+	.overlay-text {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		color: #fff;
+		font-size: 3rem;
+		font-weight: bold;
+		text-align: center;
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+	}
+
+	.profile-picture-container:hover .overlay,
+	.profile-picture-container:hover .overlay-text {
+		opacity: 1;
 	}
 
 	@media (max-width: 1300px) {
