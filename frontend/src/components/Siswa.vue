@@ -90,14 +90,7 @@
 					});
 				}
 			},
-			reject: () => {
-				toast.add({
-					severity: "error",
-					summary: "Rejected",
-					detail: "Tidak jadi menghapus data",
-					life: 3000,
-				});
-			},
+			reject: () => {},
 		});
 	};
 

@@ -38,3 +38,7 @@
 .p-toast .p-toast-message .p-toast-message-content .p-toast-message-text {
 	margin: 0 0 0 0.5rem;
 }
+
+button.p-button-danger {
+	background-color: #ff0000;
+}
