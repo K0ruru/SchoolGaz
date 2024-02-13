@@ -17,4 +17,6 @@ type Guru struct {
 	Religion       string   `gorm:"type:varchar(25)"`
 	ProfilePicture string   `gorm:"type:varchar(50)"`
 	Role           RoleEnum `gorm:"type:role_enum;default:'guru'"`
+	Mapel          *int
+	MapelData      Mapel `gorm:"foreignkey:Mapel"`
 }

@@ -56,13 +56,12 @@
 
 			if (response.status === 200) {
 				emits("closeEditForm"); // Emit the closeEditForm event
-				window.location.reload().then(() => {
-					toast.add({
-						severity: "info",
-						summary: "Confirmed",
-						detail: "Data Berhasil Di-edit",
-						life: 3000,
-					});
+				window.location.reload();
+				toast.add({
+					severity: "info",
+					summary: "Confirmed",
+					detail: "Data Berhasil Di-edit",
+					life: 3000,
 				});
 			} else {
 				// Handle other status codes or errors

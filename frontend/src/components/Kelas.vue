@@ -24,6 +24,9 @@
 			Gender: string;
 			Religion: string;
 			Profilepicture: string;
+			MapelData: {
+				Nama_mapel: string;
+			};
 		};
 	}
 
@@ -106,7 +109,7 @@
 						</div>
 						<div class="profile-info">
 							<p>Bidang :</p>
-							<p>Matematika</p>
+							<p>{{ kelasWalasData.Walas.MapelData.Nama_mapel }}</p>
 						</div>
 					</div>
 				</div>

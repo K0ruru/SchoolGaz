@@ -13,6 +13,23 @@
 	const noTelp = ref(guruData.NoTelp);
 	const jenkel = ref(guruData.Gender);
 	const agama = ref(guruData.Religion);
+	const mapel = ref(guruData.Mapel);
+
+	interface Mapel {
+		Id_mapel: number;
+		Nama_mapel: string;
+	}
+
+	const mapelData = ref<Mapel[]>([]);
+
+	axios
+		.get("http://localhost:8080/mapel/")
+		.then((response) => {
+			mapelData.value = response.data;
+		})
+		.catch((error) => {
+			console.error("Error fetching mapel data:", error);
+		});
 
 	const saveChanges = async () => {
 		try {
@@ -25,6 +42,7 @@
 					NoTelp: noTelp.value,
 					Gender: jenkel.value,
 					Religion: agama.value,
+					Mapel: mapel.value,
 				}
 			);
 
@@ -79,7 +97,6 @@
 						<label for="notelp">No-Telp :</label>
 						<input v-model="noTelp" type="number" id="notelp" name="notelp" />
 					</div>
-					<div class="form-input"></div>
 					<div class="form-input">
 						<label for="jenkel">Jenis Kelamin :</label>
 						<input v-model="jenkel" type="text" id="jenkel" name="jenkel" />
@@ -95,7 +112,18 @@
 							<option value="Khonghucu">Khonghucu</option>
 						</select>
 					</div>
-					<div class="form-input"></div>
+					<div class="form-input">
+						<label for="kelas">Bidang :</label>
+						<select v-model="mapel" id="kelas" name="kelas">
+							<option
+								v-for="mapelItem in mapelData"
+								:key="mapelItem.Id_mapel"
+								:value="mapelItem.Id_mapel"
+							>
+								{{ mapelItem.Nama_mapel }}
+							</option>
+						</select>
+					</div>
 				</div>
 				<button class="button" @click="saveChanges">Save Changes</button>
 			</form>

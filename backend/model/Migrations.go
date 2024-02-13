@@ -3,8 +3,7 @@ package model
 import "github.com/jinzhu/gorm"
 
 func AutoMigrate(db *gorm.DB) error {
-
-	// Check if the custom enum type exists
+	// Check if the custom enum types exist
 	var typeStatusExists bool
 	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'status_enum')").Row().Scan(&typeStatusExists); err != nil {
 		return err
@@ -15,7 +14,7 @@ func AutoMigrate(db *gorm.DB) error {
 		return err
 	}
 
-	// If the type does not exist, create it
+	// If the types do not exist, create them
 	if !typeStatusExists {
 		if err := db.Exec("CREATE TYPE status_enum AS ENUM ('pending', 'active')").Error; err != nil {
 			return err
@@ -32,6 +31,9 @@ func AutoMigrate(db *gorm.DB) error {
 	}
 
 	// AutoMigrate other models
+	if err := db.AutoMigrate(&Mapel{}).Error; err != nil {
+		return err
+	}
 	if err := db.AutoMigrate(&Guru{}).Error; err != nil {
 		return err
 	}
@@ -48,9 +50,6 @@ func AutoMigrate(db *gorm.DB) error {
 		return err
 	}
 	if err := db.AutoMigrate(&Jawaban{}).Error; err != nil {
-		return err
-	}
-	if err := db.AutoMigrate(&Mapel{}).Error; err != nil {
 		return err
 	}
 
@@ -74,8 +73,19 @@ func AutoMigrate(db *gorm.DB) error {
 		if err := db.Model(&User{}).AddForeignKey("kelas", "kelas(Id_kelas)", "SET NULL", "CASCADE").Error; err != nil {
 			return err
 		}
-
 	}
+
+	var fkBidangGuru bool
+	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'gurus_mapel_mapels_id_mapel_foreign' AND table_name = 'gurus')").Row().Scan(&fkBidangGuru); err != nil {
+		return err
+	}
+
+	if !fkBidangGuru {
+		if err := db.Model(&Guru{}).AddForeignKey("mapel", "mapels(Id_mapel)", "SET NULL", "CASCADE").Error; err != nil {
+			return err
+		}
+	}
+
 	// Add index for Guru model
 	db.Model(&Guru{}).AddIndex("idx_gurus_role", "role")
 

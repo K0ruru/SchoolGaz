@@ -150,7 +150,7 @@ func GetGuru(c *gin.Context) {
 	nis := c.Param("NIS")
 	var GetGuru model.Guru
 
-	if err := dbConn.Where("NIS = ?", nis).First(&GetGuru).Error; err != nil {
+	if err := dbConn.Preload("MapelData").Where("NIS = ?", nis).First(&GetGuru).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "guru no found"})
 		fmt.Println(err)
 		return
@@ -180,7 +180,7 @@ func GetALLguru(c *gin.Context) {
 		return
 	}
   var AllGuru []model.Guru
-	if err := dbConn.Find(&AllGuru).Error; err != nil {
+	if err := dbConn.Preload("MapelData").Find(&AllGuru).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot find guru"})
 		return
 	}

@@ -20,7 +20,7 @@ func GetAllKelas(c *gin.Context) {
     }
 
     var AllKelas []model.Kelas
-    if err := dbConn.Preload("Walas").Find(&AllKelas).Error; err != nil {
+    if err := dbConn.Preload("Walas.MapelData").Find(&AllKelas).Error; err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "cannot find kelas"})
         return
     }
@@ -40,22 +40,12 @@ func GetKelas(c *gin.Context) {
     }
     
     // Fetch the kelas with the given ID
-    if err := dbConn.First(&kelas, kelasID).Error; err != nil {
+    if err := dbConn.Preload("Walas.MapelData").First(&kelas, kelasID).Error; err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         fmt.Println(err)
         return
     }
     
-    // Fetch associated Walas for the Kelas
-    var walas model.Guru
-    if err := dbConn.First(&walas, kelas.WalasNIS).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        fmt.Println(err)
-        return
-    }
-    // Exclude passphrase from Walas object
-    walas.Passphrase = ""
-    kelas.Walas = walas
     
     c.JSON(http.StatusOK, kelas)
 }

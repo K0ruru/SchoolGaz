@@ -16,8 +16,11 @@
 		Religion: string;
 		NoTelp: number;
 		Status: string;
-		// Mapel: string;
-		[key: string]: number | string;
+		Mapel: number;
+		MapelData: {
+			Nama_mapel: string;
+		};
+		[key: string]: number | string | { Nama_mapel: string };
 	}
 
 	const search = ref("");
@@ -112,8 +115,8 @@
 				guruData.Email.toLowerCase().includes(searchTerm) ||
 				guruData.Gender.toLowerCase().includes(searchTerm) ||
 				guruData.Religion.toLowerCase().includes(searchTerm) ||
-				guruData.NoTelp.toString().includes(searchTerm) // Corrected property name
-			// guruData.Mapel.toLowerCase().includes(searchTerm)
+				guruData.NoTelp.toString().includes(searchTerm) ||
+				guruData.MapelData.Nama_mapel.toLowerCase().includes(searchTerm)
 		);
 	});
 
@@ -154,7 +157,7 @@
 					<th @click="sortTable('NoTelp')">No-Telpon</th>
 					<th @click="sortTable('Gender')">Jenis Kelamin</th>
 					<th @click="sortTable('Religion')">Agama</th>
-					<!-- <th @click="sortTable('Status')">Status</th> -->
+					<th @click="sortTable('Mapel')">Bidang</th>
 					<th>Action</th>
 				</tr>
 			</thead>
@@ -166,7 +169,7 @@
 					<td>{{ guruData.NoTelp }}</td>
 					<td>{{ guruData.Gender }}</td>
 					<td>{{ guruData.Religion }}</td>
-					<!-- <td>{{ userData.Status }}</td> -->
+					<td>{{ guruData.MapelData.Nama_mapel }}</td>
 					<td>
 						<button class="button-edit" @click="showEditForm(guruData)">
 							Edit
