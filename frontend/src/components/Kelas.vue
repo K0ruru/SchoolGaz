@@ -1,251 +1,308 @@
 <script setup lang="ts">
-	import Navbar from "./Navbar.vue";
-	import { ref, onMounted } from "vue";
-	import axios from "axios";
-	import { useRoute } from "vue-router";
+import Navbar from "./Navbar.vue";
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import { useRoute } from "vue-router";
 
-	interface Siswa {
-		NIS: number;
-		Nama: string;
-		Profilepicture: string;
-		Email: string;
-		Gender: string;
-	}
+interface Siswa {
+  NIS: number;
+  Nama: string;
+  Profilepicture: string;
+  Email: string;
+  Gender: string;
+}
 
-	interface KelasWalas {
-		Id_kelas: number;
-		NamaKelas: string;
-		WalasNIS: number;
-		Walas: {
-			NIS: number;
-			NamaGuru: string;
-			Email: string;
-			NoTelp: number;
-			Gender: string;
-			Religion: string;
-			Profilepicture: string;
-			MapelData: {
-				Nama_mapel: string;
-			};
-		};
-	}
+interface KelasWalas {
+  Id_kelas: number;
+  NamaKelas: string;
+  WalasNIS: number;
+  Walas: {
+    NIS: number;
+    NamaGuru: string;
+    Email: string;
+    NoTelp: number;
+    Gender: string;
+    Religion: string;
+    Profilepicture: string;
+    MapelData: {
+      Nama_mapel: string;
+    };
+  };
+}
 
-	const siswaData = ref<Siswa[]>([]);
-	const kelasWalasData = ref<KelasWalas | null>(null);
+const siswaData = ref<Siswa[]>([]);
+const kelasWalasData = ref<KelasWalas | null>(null);
 
-	const route = useRoute();
+const route = useRoute();
 
-	onMounted(async () => {
-		const kelasId = route.params.id;
+onMounted(async () => {
+  const kelasId = route.params.id;
 
-		try {
-			// Fetch data from the API using Axios
-			const response = await axios.get(
-				`http://localhost:8080/Auth/siswa/${kelasId}`
-			);
-			// Update the siswaData with the received data
-			siswaData.value = response.data.sort((a: Siswa, b: Siswa) =>
-				a.Nama.localeCompare(b.Nama)
-			);
-		} catch (error) {
-			console.error("Error fetching data:", error);
-		}
-	});
+  try {
+    // Fetch data from the API using Axios
+    const response = await axios.get(
+      `http://localhost:8080/Auth/siswa/${kelasId}`,
+    );
+    // Update the siswaData with the received data
+    siswaData.value = response.data.sort((a: Siswa, b: Siswa) =>
+      a.Nama.localeCompare(b.Nama),
+    );
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+});
 
-	onMounted(async () => {
-		const kelasId = route.params.id;
+onMounted(async () => {
+  const kelasId = route.params.id;
 
-		try {
-			const response = await axios.get(
-				`http://localhost:8080/kelas/${kelasId}`
-			);
+  try {
+    const response = await axios.get(`http://localhost:8080/kelas/${kelasId}`);
 
-			kelasWalasData.value = response.data;
-		} catch (error) {}
-	});
+    kelasWalasData.value = response.data;
+  } catch (error) { }
+});
 
-	const getProfilePictureUrl = (filePath: string) => {
-		const baseURL = "http://localhost:8080"; // Replace with your backend base URL
-		const normalizedPath = filePath.replace(/\\/g, "/"); // Replace backslashes with forward slashes
-		return `${baseURL}/${normalizedPath}`;
-	};
+const getProfilePictureUrl = (filePath: string) => {
+  const baseURL = "http://localhost:8080"; // Replace with your backend base URL
+  const normalizedPath = filePath.replace(/\\/g, "/"); // Replace backslashes with forward slashes
+  return `${baseURL}/${normalizedPath}`;
+};
 </script>
 
 <template>
-	<div class="container">
-		<Navbar />
-		<div class="kelas-content">
-			<div class="walas-container">
-				<div v-if="kelasWalasData" class="profile-information">
-					<img
-						v-if="kelasWalasData.Walas.Profilepicture"
-						:src="kelasWalasData.Walas.Profilepicture"
-						alt=""
-						class="profile-picture"
-					/>
-					<img
-						v-else
-						src="../assets/Doge hehe.jpg"
-						alt=""
-						class="profile-picture"
-					/>
-					<p class="nis">001002003</p>
-					<div class="profile-info-container">
-						<div class="profile-info">
-							<p>Nama :</p>
-							<p>{{ kelasWalasData.Walas.NamaGuru }}</p>
-						</div>
-						<div class="profile-info">
-							<p>Email :</p>
-							<p>{{ kelasWalasData.Walas.Email }}</p>
-						</div>
-						<div class="profile-info">
-							<p>Gender :</p>
-							<p>{{ kelasWalasData.Walas.Gender }}</p>
-						</div>
-						<div class="profile-info">
-							<p>Agama :</p>
-							<p>{{ kelasWalasData.Walas.Religion }}</p>
-						</div>
-						<div class="profile-info">
-							<p>Bidang :</p>
-							<p>{{ kelasWalasData.Walas.MapelData.Nama_mapel }}</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="siswa-container">
-				<table>
-					<thead>
-						<tr>
-							<th>NO</th>
-							<th>Foto</th>
-							<th>Nama</th>
-							<th>Nis</th>
-							<th>Email</th>
-							<th>Gender</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="(siswa, index) in siswaData" :key="index">
-							<td>{{ index + 1 }}</td>
-							<!-- Use a conditional check for profile_picture -->
-							<td>
-								<img
-									v-if="siswa.Profilepicture"
-									:src="getProfilePictureUrl(siswa.Profilepicture)"
-									alt=""
-								/>
-								<img v-else src="../assets/Doge hehe.jpg" alt="" />
-							</td>
-							<td>{{ siswa.Nama }}</td>
-							<td>{{ siswa.NIS }}</td>
-							<td>{{ siswa.Email }}</td>
-							<td>{{ siswa.Gender }}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
+  <div class="container">
+    <Navbar />
+    <div class="setting">
+      <button>
+        <!-- <ion-icon name="ellipsis-vertical"></ion-icon> -->
+      </button>
+      <div class="profile-dropdown">
+        <div class="profile-section"><ion-icon name="settings"></ion-icon></div>
+        <div class="dropdown-content">
+          <a href="#">EDIT</a>
+          <a href="#" class="delete">DELETE</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="kelas-content">
+      <div class="walas-container">
+        <div v-if="kelasWalasData" class="profile-information">
+          <img v-if="kelasWalasData.Walas.Profilepicture" :src="kelasWalasData.Walas.Profilepicture" alt=""
+            class="profile-picture" />
+          <img v-else src="../assets/Doge hehe.jpg" alt="" class="profile-picture" />
+          <p class="nis">001002003</p>
+          <div class="profile-info-container">
+            <div class="profile-info">
+              <p>Nama :</p>
+              <p>{{ kelasWalasData.Walas.NamaGuru }}</p>
+            </div>
+            <div class="profile-info">
+              <p>Email :</p>
+              <p>{{ kelasWalasData.Walas.Email }}</p>
+            </div>
+            <div class="profile-info">
+              <p>Gender :</p>
+              <p>{{ kelasWalasData.Walas.Gender }}</p>
+            </div>
+            <div class="profile-info">
+              <p>Agama :</p>
+              <p>{{ kelasWalasData.Walas.Religion }}</p>
+            </div>
+            <div class="profile-info">
+              <p>Bidang :</p>
+              <p>{{ kelasWalasData.Walas.MapelData.Nama_mapel }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="siswa-container">
+        <table>
+          <thead>
+            <tr>
+              <th>NO</th>
+              <th>Foto</th>
+              <th>Nama</th>
+              <th>Nis</th>
+              <th>Email</th>
+              <th>Gender</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(siswa, index) in siswaData" :key="index">
+              <td>{{ index + 1 }}</td>
+              <!-- Use a conditional check for profile_picture -->
+              <td>
+                <img v-if="siswa.Profilepicture" :src="getProfilePictureUrl(siswa.Profilepicture)" alt="" />
+                <img v-else src="../assets/Doge hehe.jpg" alt="" />
+              </td>
+              <td>{{ siswa.Nama }}</td>
+              <td>{{ siswa.NIS }}</td>
+              <td>{{ siswa.Email }}</td>
+              <td>{{ siswa.Gender }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-	.kelas-content {
-		margin-top: 60px;
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-	}
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
 
-	.walas-container {
-		width: 30%;
-	}
+.profile-section {
+  background-color: #0000ff;
+  color: #fff;
+  padding-top: 5px;
+  padding-right: 7px;
+  padding-left: 7px;
+  cursor: pointer;
+}
 
-	.siswa-container {
-		width: 60%;
-		display: flex;
-		align-items: flex-start;
-	}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 113px;
+  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); */
+  box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.1);
+  z-index: 1;
+}
 
-	.profile-information {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		/* background-color: rgb(238, 238, 238); */
-		box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.1);
-		border-radius: 7px;
-		padding: 25px;
-	}
+.dropdown-content a {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  transition: 0.2s;
+  border-radius: 7px;
+  margin: 10px;
+}
 
-	.profile-picture {
-		max-width: 150px;
-		border-radius: 50%;
-	}
+.dropdown-content a:hover {
+  background-color: #0000ff;
+  color: #fff;
+}
 
-	.nis {
-		margin-bottom: 20px;
-		margin-top: 10px;
-		color: grey;
-	}
+.profile-dropdown .dropdown-content a.delete:hover {
+  background-color: #ff0000;
+}
 
-	.profile-info {
-		display: flex;
-		justify-content: space-between;
-		margin: 40px 0px;
-		color: white;
-	}
+.profile-dropdown:hover .dropdown-content {
+  display: block;
+}
 
-	.profile-info-container {
-		width: 80%;
-		background-color: #0000ff;
-		padding: 20px;
-		border-radius: 7px;
-	}
+.setting {
+  /* position: fixed; */
+  margin: 20px;
+}
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: 50px;
-		box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.2);
-	}
+.setting button {
+  border: none;
+  background-color: #fff;
+  font-size: 19px;
+}
 
-	th,
-	td {
-		border: 1px solid #ddd;
-		padding: 20px 8px;
-		text-align: center;
-		border: none;
-	}
+.kelas-content {
+  margin-top: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 
-	th {
-		background-color: #f2f2f2;
-	}
+.walas-container {
+  width: 30%;
+}
 
-	th:first-child {
-		border-top-left-radius: 10px;
-	}
+.siswa-container {
+  width: 60%;
+  display: flex;
+  align-items: flex-start;
+}
 
-	th:last-child {
-		border-top-right-radius: 10px;
-	}
+.profile-information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* background-color: rgb(238, 238, 238); */
+  box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.1);
+  border-radius: 7px;
+  padding: 25px;
+}
 
-	th {
-		background-color: #0000ff;
-		color: #fff;
-	}
+.profile-picture {
+  max-width: 150px;
+  border-radius: 50%;
+}
 
-	td {
-		border-color: #fff;
-	}
+.nis {
+  margin-bottom: 20px;
+  margin-top: 10px;
+  color: grey;
+}
 
-	td img {
-		max-width: 80px;
-		border-radius: 50px;
-	}
+.profile-info {
+  display: flex;
+  justify-content: space-between;
+  margin: 40px 0px;
+  color: white;
+}
 
-	tr:nth-child(even) {
-		background-color: #f2f2f2;
-	}
+.profile-info-container {
+  width: 80%;
+  background-color: #0000ff;
+  padding: 20px;
+  border-radius: 7px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 50px;
+  box-shadow: 0 30px 60px 0 rgba(0, 26, 255, 0.2);
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 20px 8px;
+  text-align: center;
+  border: none;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+th:first-child {
+  border-top-left-radius: 10px;
+}
+
+th:last-child {
+  border-top-right-radius: 10px;
+}
+
+th {
+  background-color: #0000ff;
+  color: #fff;
+}
+
+td {
+  border-color: #fff;
+}
+
+td img {
+  max-width: 80px;
+  border-radius: 50px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
 </style>
