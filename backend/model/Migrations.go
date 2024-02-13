@@ -85,6 +85,28 @@ func AutoMigrate(db *gorm.DB) error {
 			return err
 		}
 	}
+	
+	var fkTugasMapel bool
+	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'tugas_id_mapel_mapels_id_mapel_foreign' AND table_name = 'tugas')").Row().Scan(&fkTugasMapel); err != nil {
+		return err
+	}
+
+	if !fkTugasMapel {
+		if err := db.Model(&Tugas{}).AddForeignKey("Id_mapel", "mapels(Id_mapel)", "SET NULL", "CASCADE").Error; err != nil {
+			return err
+		}
+	}
+	
+	var fkTugasKelas bool
+	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'tugas_id_mapel_mapels_id_mapel_foreign' AND table_name = 'tugas')").Row().Scan(&fkTugasKelas); err != nil {
+		return err
+	}
+
+	if !fkTugasKelas {
+		if err := db.Model(&Tugas{}).AddForeignKey("Kelas", "kelas(Id_kelas)", "SET NULL", "CASCADE").Error; err != nil {
+			return err
+		}
+	}
 
 	// Add index for Guru model
 	db.Model(&Guru{}).AddIndex("idx_gurus_role", "role")
