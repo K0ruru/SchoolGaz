@@ -165,12 +165,14 @@ func LoginUser(c *gin.Context) {
 	// Bind the request body to the body struct
 	if err := c.Bind(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+    fmt.Println(err)
 		return
 	}
 
 	// Retrieve the user from the database
 	if err := dbConn.First(&login, "NIS = ?", body.NIS).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+    fmt.Println(err)
 		return
 	}
 
