@@ -4,7 +4,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import Swal from "sweetalert2";
-import InputText from "primevue/inputtext";
 import FloatLabel from 'primevue/floatlabel';
 
 const nis = ref("");
