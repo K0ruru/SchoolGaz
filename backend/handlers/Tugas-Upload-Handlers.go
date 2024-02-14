@@ -30,7 +30,7 @@ func InitCloudinary() {
 }
 
 // get all file
-func IndexFile(c *gin.Context) {
+func IndexFileTugas(c *gin.Context) {
 	if dbConn == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "error connection or from the server error"})
 		return
@@ -44,7 +44,7 @@ func IndexFile(c *gin.Context) {
 }
 
 // get file by id
-func GetFile(c *gin.Context) {
+func GetFileTugas(c *gin.Context) {
 	if dbConn == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"ERROR": "database connection error, or from the server error"})
 		return
@@ -63,7 +63,7 @@ func GetFile(c *gin.Context) {
 }
 
 // Upload File ke Cloudinary dan database
-func UploadFile(c *gin.Context) {
+func UploadFileTugas(c *gin.Context) {
 	if dbConn == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection not initialized"})
 		return
@@ -90,7 +90,7 @@ func UploadFile(c *gin.Context) {
 
 	// Upload file to Cloudinary
 	ctx := context.Background()
-	uploadResult, err := UploadToCloudinary(ctx, file, fileHeader.Filename)
+	uploadResult, err := UploadToCloudinaryTugas(ctx, file, fileHeader.Filename)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to upload file"})
 		fmt.Println(err)
@@ -109,7 +109,7 @@ func UploadFile(c *gin.Context) {
 
 }
 
-func UploadToCloudinary(ctx context.Context, file multipart.File, filename string) (*uploader.UploadResult, error) {
+func UploadToCloudinaryTugas(ctx context.Context, file multipart.File, filename string) (*uploader.UploadResult, error) {
 	// Define upload parameters
 	params := uploader.UploadParams{
 		PublicID: filename,

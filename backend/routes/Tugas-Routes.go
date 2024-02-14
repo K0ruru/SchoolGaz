@@ -16,8 +16,8 @@ func TugasRoutes(r *gin.Engine) {
 		tugasGroup.DELETE("/delete/:id_tugas", handlers.DeleteTugas)
 
 		// Route Upload Tugas
-		tugasGroup.POST("/file/upload", handlers.UploadFile)
-		tugasGroup.GET("/file", handlers.IndexFile)
-		tugasGroup.GET("/file/:id_UT", handlers.GetFile)
+		tugasGroup.POST("/file/upload", handlers.UploadFileTugas)
+		tugasGroup.GET("/file", handlers.IndexFileTugas)
+		tugasGroup.GET("/file/:id_UT", handlers.GetFileTugas)
 	}
 }
