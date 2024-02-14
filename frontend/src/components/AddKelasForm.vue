@@ -1,52 +1,86 @@
 <script setup lang="ts">
-import Navbar from "./Navbar.vue";
 // import { ref } from "vue";
-import Editor from "primevue/editor";
-import Calendar from "primevue/calendar";
 // const soalText = ref("");
+	import { defineEmits } from "vue";
+	const emits = defineEmits(["closeAddKelasForm"]);
 </script>
 
 <template>
-  <div class="container">
-    <Navbar />
-    <div class="button-add">
-      <button>Tambah Tugas</button>
-    </div>
+  <div class="edit-form-overlay">
     <div class="form-container">
       <div class="form-inputs-container">
+
         <div class="form-inputs">
+        <div class="close-button">
+            <button @click="emits('closeAddKelasForm')" class="button-close">
+             ✖
+          </button>
+        </div>
           <form action="#" method="POST">
-            <label for="email">Judul Tugas</label>
+            <label for="namakelas">Nama Kelas</label>
             <input type="email" id="email" name="email" />
 
-            <label for="fullName">Dead line</label>
-            <!-- <input type="text" id="fullName" name="fullName" /> -->
-            <Calendar showIcon :showOnFocus="false" />
+            <label for="namakelas">Wali Kelas</label>
+            <select>
+              <option>Bu Ratna Sari SUgih</option>
+              <option>Asep Lukman AH SKOM</option>
+            </select>
 
-            <label for="photo">File</label>
-            <input type="file" id="photo" name="photo" />
-
-            <button class="submit-btn" type="submit">Submit</button>
+            <button class="submit-btn" type="submit">Buat Kelas</button>
           </form>
-        </div>
-        <div class="editor">
-          <label>Arahan Tugas</label>
-          <Editor editorStyle="height: 270px" />
         </div>
       </div>
     </div>
-    <!-- <textarea v-model="soalText" name="" id="" cols="30" rows="10" placeholder="Tulis Arahan"></textarea> -->
   </div>
 </template>
 
 <style scoped>
+	.button-close {
+		background-color: rgba(1, 1, 1, 0);
+		border: none;
+		/* padding: 2px 10px; */
+		/* border-radius: 100px; */
+		font-size: 17px;
+    margin: -5px;
+	}
+
+	.close-button {
+		display: flex;
+		justify-content: flex-end;
+    padding: 0px;
+    margin: 0px;
+	}
+
+.edit-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+select {
+  width: 100xp;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 15px;
+  cursor: pointer;
+}
+
 .button-add {
   display: flex;
   width: 100%;
   justify-content: flex-end;
 }
 
-.button-add  button{
+.button-add button {
   margin-top: 20px;
   background-color: blue;
   border: none;
@@ -55,7 +89,8 @@ import Calendar from "primevue/calendar";
   padding: 10px;
   font-weight: 600;
 }
-.button-add  button:hover{
+
+.button-add button:hover {
   margin-top: 20px;
   background-color: darkblue;
   border: none;
@@ -65,20 +100,13 @@ import Calendar from "primevue/calendar";
   font-weight: 600;
 }
 
-
-
-.editor {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
 .form-inputs-container {
-  margin-top: 100px;
+  padding: 40px;
   display: flex;
   justify-content: center;
-  /* align-items: center; */
+  background-color: #ffffff;
   gap: 17px;
+  border-radius: 7px;
 }
 
 label,
@@ -134,4 +162,3 @@ form {
   background-color: #d6d6d6;
 }
 </style>
-
