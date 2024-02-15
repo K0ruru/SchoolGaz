@@ -15,6 +15,8 @@
 	const logout = () => {
 		localStorage.removeItem("token");
 		localStorage.removeItem("nama");
+		localStorage.removeItem("NIS");
+		localStorage.removeItem("role");
 		router.push("/login");
 	};
 </script>

@@ -12,6 +12,7 @@
 	};
 
 	const username = localStorage.getItem("nama");
+	const role = localStorage.getItem("role");
 </script>
 
 <template>
@@ -31,7 +32,7 @@
 
 		<div class="cont">
 			<!-- box untuk siswa -->
-			<div class="box" @click="navigasi('siswa')">
+			<div v-if="role === 'admin'" class="box" @click="navigasi('siswa')">
 				<div class="content">
 					<div class="icon-1"><ion-icon name="people"></ion-icon></div>
 					<div class="text">
@@ -48,7 +49,7 @@
 				</div>
 			</div>
 			<!-- box untuk guru -->
-			<div class="box" @click="navigasi('guru')">
+			<div v-if="role === 'admin'" class="box" @click="navigasi('guru')">
 				<div class="content">
 					<div class="icon-2">
 						<ion-icon name="accessibility"></ion-icon>
@@ -67,7 +68,11 @@
 				</div>
 			</div>
 			<!-- box untuk kelas -->
-			<div class="box" @click="navigasi('kelas')">
+			<div
+				v-if="role === 'admin' || role === 'guru'"
+				class="box"
+				@click="navigasi('kelas')"
+			>
 				<div class="content">
 					<div class="icon-3"><ion-icon name="school"></ion-icon></div>
 					<div class="text">
@@ -84,7 +89,11 @@
 				</div>
 			</div>
 			<!-- box 4 -->
-			<div class="box" @click="navigasi('addtugas')">
+			<div
+				v-if="role === 'admin' || role === 'guru'"
+				class="box"
+				@click="navigasi('addtugas')"
+			>
 				<div class="content">
 					<div class="icon-3"><ion-icon name="book"></ion-icon></div>
 					<div class="text">
