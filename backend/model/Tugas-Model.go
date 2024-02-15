@@ -16,4 +16,6 @@ type Tugas struct {
 	Mapel      Mapel
 	Id_jawaban int
 	Jawaban    Jawaban
+	WalasNIS   int
+	Walas      Guru
 }

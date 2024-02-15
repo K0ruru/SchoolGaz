@@ -54,14 +54,36 @@ func AutoMigrate(db *gorm.DB) error {
 		return err
 	}
 
-	// var fkMapelTugas bool
-	// if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = '' )") {
-	// 	return nil, err
-	// }
+	var fkUsersJawaban bool
+	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'jawabans_siswa_nis_users_nis_foreign' )").Row().Scan(&fkUsersJawaban); err != nil {
+		return err
+	}
 
-	// if err := db.Model(&Tugas{}).AddForeignKey("jawaban", "jawaban(Id_jawaban)", "CASCADE", "CASCADE").Error; err != nil {
-	// 	return err
-	// }
+	if !fkUsersJawaban {
+		if err := db.Model(&Jawaban{}).AddForeignKey("siswa_nis", "users(NIS)", "CASCADE", "CASCADE").Error; err != nil {
+			return err
+		}
+	}
+
+	var fkGuruTugas bool
+	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'tugas_walas_nis_gurus_nis_foreign' )").Row().Scan(&fkGuruTugas); err != nil {
+		return err
+	}
+	if !fkGuruTugas {
+		if err := db.Model(&Tugas{}).AddForeignKey("walas_nis", "gurus(NIS)", "CASCADE", "CASCADE").Error; err != nil {
+			return err
+		}
+	}
+	var fkJawabanTugas bool
+	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'tugas_id_jawaban_jawabans_id_jawaban_foreign' AND table_name = 'tugas' )").Row().Scan(&fkJawabanTugas); err != nil {
+		return err
+	}
+
+	if !fkJawabanTugas {
+		if err := db.Model(&Tugas{}).AddForeignKey("id_jawaban", "jawabans(Id_jawaban)", "CASCADE", "CASCADE").Error; err != nil {
+			return err
+		}
+	}
 
 	var constraintExists bool
 	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'kelas_walas_nis_gurus_nis_foreign' AND table_name = 'kelas')").Row().Scan(&constraintExists); err != nil {
