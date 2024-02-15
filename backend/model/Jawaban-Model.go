@@ -11,5 +11,5 @@ type Jawaban struct {
 	CreateAt   time.Time `json:"create_at"`
 	File       string    `gorm:"type:varchar(100)" json:"file"`
 	SiswaNIS   int
-	Siswa      User
+	Siswa      User 
 }

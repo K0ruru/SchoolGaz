@@ -7,7 +7,6 @@ import (
 	"server/model"
 	"strconv"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,40 +42,6 @@ func GetJwabanByid(c *gin.Context) {
 
 func CreateJawaban(c *gin.Context) {
 	}
-	var jawaban model.Jawaban
-
-	if err := c.ShouldBindJSON(&jawaban); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Mengambil NIS dari sesi
-	session := sessions.Default(c)
-	nis := session.Get("NIS") // Ubah "nis" menjadi "NIS" sesuai dengan sesi yang telah Anda set sebelumnya
-	if nis == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "NIS not found in session"})
-		return
-	}
-
-	// Konversi nis ke tipe int
-	nisInt, ok := nis.(int)
-	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "NIS in session is not an integer"})
-		return
-	}
-
-	jawaban.SiswaNIS = nisInt
-
-	jawaban.CreateAt = time.Now()
-
-	if err := dbConn.Create(&jawaban).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		fmt.Println(err)
-		return
-	}
-
-	c.JSON(http.StatusOK, jawaban)
-}
 
 func UpdateJawaban(c *gin.Context) {
 	if dbConn == nil {
