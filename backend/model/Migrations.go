@@ -43,10 +43,7 @@ func AutoMigrate(db *gorm.DB) error {
 	}
 	if err := db.AutoMigrate(&Tugas{}).Error; err != nil {
 		return err
-	}
-	if err := db.AutoMigrate(&UploadTugas{}).Error; err != nil {
-		return err
-	}
+	}	
 	if err := db.AutoMigrate(&Jawaban{}).Error; err != nil {
 		return err
 	}

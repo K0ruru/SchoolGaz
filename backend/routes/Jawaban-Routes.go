@@ -14,5 +14,6 @@ func JawabanRoutes(router *gin.Engine) {
 		JawabanGroups.POST("/add", handlers.CreateJawaban)
 		JawabanGroups.PUT("/:id_jawaban", handlers.UpdateJawaban)
 		JawabanGroups.DELETE("/:id_jawaban", handlers.DeleteJawaban)
+    JawabanGroups.POST("/file/:id_jawaban",handlers.UploadTugas)
 	}
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"server/db"
-	"server/handlers"
+	
 	"server/model"
 	"server/routes"
 
@@ -50,7 +50,7 @@ func main() {
 	routes.TugasRoutes(router)
 	routes.JawabanRoutes(router)
 
-	handlers.InitCloudinary()
+
 
 	// Start the HTTP server
 	router.Run(":8080")

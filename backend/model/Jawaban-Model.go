@@ -9,7 +9,7 @@ type Jawaban struct {
 	Isi        string    `gorm:"type:text" json:"isi"`
 	Nilai      uint32    `gorm:"default:0" json:"nilai"`
 	CreateAt   time.Time `json:"create_at"`
-	file       string    `gorm:"type:varchar(100)" json:"file"`
+	File       string    `gorm:"type:varchar(100)" json:"file"`
 	SiswaNIS   int
-	Siswa      Guru
+	Siswa      User 
 }
