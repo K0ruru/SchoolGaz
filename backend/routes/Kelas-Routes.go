@@ -14,6 +14,7 @@ func KelasRoutes(router *gin.Engine){
     KelasGroup.POST("/add",handlers.CreateKelas)
     KelasGroup.GET("/:id_kelas", handlers.GetKelas)
     KelasGroup.PUT("/:id_kelas", handlers.UpdateKelas)
+    KelasGroup.DELETE("/:id_kelas", handlers.DeleteKelas)
   
   } 
   

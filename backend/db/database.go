@@ -17,13 +17,14 @@ func init() {
 }
 //koneksi database
 func Connection() (*gorm.DB, error) {
+    DB_HOST := os.Getenv("DB_HOST")
     DB_USER := os.Getenv("DB_USER")
     DB_PASSWORD := os.Getenv("DB_PASSWORD")
     DB_NAME := os.Getenv("DB_NAME")
     DB_PORT := os.Getenv("DB_PORT")
 
 
-    CS := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable port=%s", DB_USER, DB_PASSWORD, DB_NAME, DB_PORT)
+    CS := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable port=%s", DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT)
 
     db, err := gorm.Open("postgres", CS)
     if err != nil {

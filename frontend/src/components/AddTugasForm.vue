@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import Navbar from "./Navbar.vue";
-// import { ref } from "vue";
+import { ref } from "vue";
 import Editor from "primevue/editor";
 import Calendar from "primevue/calendar";
+const date = ref(null);
 // const soalText = ref("");
 </script>
 
@@ -21,10 +22,15 @@ import Calendar from "primevue/calendar";
 
             <label for="fullName">Dead line</label>
             <!-- <input type="text" id="fullName" name="fullName" /> -->
-            <Calendar showIcon :showOnFocus="false" />
+            <!-- <Calendar showIcon :showOnFocus="false" /> -->
+            <Calendar v-model="date" :numberOfMonths="2" />
 
             <label for="photo">File</label>
-            <input type="file" id="photo" name="photo" />
+            <!-- <input type="file" id="photo" name="photo" /> -->
+            <label for="file-upload" class="custom-file-upload">
+              <ion-icon name="cloud-upload"></ion-icon> UPLOAD FILE
+            </label>
+            <input id="file-upload" type="file" />
 
             <button class="submit-btn" type="submit">Submit</button>
           </form>
@@ -40,13 +46,34 @@ import Calendar from "primevue/calendar";
 </template>
 
 <style scoped>
+.custom-file-upload {
+  align-items: center;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  color: #000;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .3s;
+}
+.custom-file-upload:hover{
+  align-items: center;
+  text-align: center;
+  background: #0000ff;
+  padding: 10px;
+  color: #fff;
+  border-radius: 2px;
+}
+input[type="file"] {
+    display: none;
+}
 .button-add {
   display: flex;
   width: 100%;
   justify-content: flex-end;
 }
 
-.button-add  button{
+.button-add button {
   margin-top: 20px;
   background-color: blue;
   border: none;
@@ -55,7 +82,8 @@ import Calendar from "primevue/calendar";
   padding: 10px;
   font-weight: 600;
 }
-.button-add  button:hover{
+
+.button-add button:hover {
   margin-top: 20px;
   background-color: darkblue;
   border: none;
@@ -71,6 +99,7 @@ import Calendar from "primevue/calendar";
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-width: 35%;
 }
 
 .form-inputs-container {

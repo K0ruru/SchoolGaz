@@ -2,7 +2,21 @@
 import Navbar from "./Navbar.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
+const router = useRouter();
+
+const deleteKelas = async () => {
+  const kelasId = route.params.id;
+
+  try {
+    await axios.delete(`http://localhost:8080/kelas/${kelasId}`).then(()=>{
+      router.push("/kelas");
+    });
+  } catch (error) {
+    console.error("Error deleting data:", error);
+  }
+};
 
 interface Siswa {
   NIS: number;
@@ -79,8 +93,8 @@ const getProfilePictureUrl = (filePath: string) => {
       <div class="profile-dropdown">
         <div class="profile-section"><ion-icon name="settings"></ion-icon></div>
         <div class="dropdown-content">
-          <a href="#">EDIT</a>
-          <a href="#" class="delete">DELETE</a>
+          <button @click="">EDIT</button>
+          <button @click="deleteKelas" class="delete">DELETE</button>
         </div>
       </div>
     </div>
@@ -173,9 +187,10 @@ const getProfilePictureUrl = (filePath: string) => {
   z-index: 1;
 }
 
-.dropdown-content a {
+.dropdown-content button {
   color: #333;
-  padding: 12px 16px;
+  width: 100%;
+  padding: 12px 20px;
   text-decoration: none;
   display: block;
   text-align: center;
@@ -184,12 +199,12 @@ const getProfilePictureUrl = (filePath: string) => {
   margin: 10px;
 }
 
-.dropdown-content a:hover {
+.dropdown-content button:hover {
   background-color: #0000ff;
   color: #fff;
 }
 
-.profile-dropdown .dropdown-content a.delete:hover {
+.profile-dropdown .dropdown-content button.delete:hover {
   background-color: #ff0000;
 }
 

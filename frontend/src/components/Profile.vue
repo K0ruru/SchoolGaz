@@ -300,7 +300,7 @@
 		top: 0;
 		left: 0;
 		width: 200px;
-		height: 200px;
+		height: 195px;
 		background-color: rgba(128, 128, 128, 0.5);
 		border-radius: 50%;
 		opacity: 0;
