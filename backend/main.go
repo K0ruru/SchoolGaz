@@ -9,6 +9,8 @@ import (
 	"server/routes"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,6 +31,9 @@ func main() {
 
 	// Initialize the Gin router
 	router := gin.Default()
+
+	store := cookie.NewStore([]byte("secret"))
+	router.Use(sessions.Sessions("mysession", store))
 
 	// Configure CORS
 	config := cors.DefaultConfig()
