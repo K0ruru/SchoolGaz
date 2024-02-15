@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { defineEmits } from "vue";
+	import { defineEmits, onMounted } from "vue";
 	import axios from "axios";
 	import { ref } from "vue";
 
@@ -15,14 +15,14 @@
 
 	const kelasData = ref<Kelas[]>([]);
 
-	axios
-		.get("http://localhost:8080/kelas/")
-		.then((response) => {
+	onMounted(async () => {
+		try {
+			const response = await axios.get("http://localhost:8080/kelas/");
 			kelasData.value = response.data;
-		})
-		.catch((error) => {
+		} catch (error) {
 			console.error("Error fetching kelas data:", error);
-		});
+		}
+	});
 </script>
 <template>
 	<div class="floating-overlay">
@@ -37,7 +37,7 @@
 					v-for="kelas in kelasData"
 					style="text-decoration: none; color: inherit"
 					:key="kelas.Id_kelas"
-					:to="{ name: 'kelas', params: { id: kelas.Id_kelas } }"
+					:to="{ name: 'addtugasform', params: { id: kelas.Id_kelas } }"
 					class="kelas-card"
 				>
 					<div class="kelas-card-content">
@@ -54,18 +54,18 @@
 </template>
 
 <style scoped>
- .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
-  }
+	.fade-in {
+		animation: fadeIn 0.5s ease-in-out;
+	}
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
 	.floating-overlay {
 		position: fixed;
 		top: 0;

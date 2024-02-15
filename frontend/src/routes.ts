@@ -41,7 +41,8 @@ const routes: Array<RouteRecordRaw> = [
 		meta: { requiresAuth: true },
 	},
 	{
-		path: "/addtugasform",
+		path: "/addtugasform/:id",
+		name: "addtugasform",
 		component: AddTugasForm,
 		meta: { requiresAuth: true },
 	},

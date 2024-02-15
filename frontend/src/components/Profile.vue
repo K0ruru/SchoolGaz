@@ -27,7 +27,23 @@
 		};
 	}
 
+	interface Guru {
+		NIS: Number;
+		NamaGuru: string;
+		Email: string;
+		NoTelp: number;
+		Gender: string;
+		Religion: string;
+		Profilepicture: string;
+		Role: string;
+		Mapel: string;
+		MapelData: {
+			Nama_mapel: string;
+		};
+	}
+
 	const userData = ref<User | null>(null);
+	const guruData = ref<Guru | null>(null);
 
 	onMounted(async () => {
 		const NIS = route.params.id;
@@ -37,7 +53,21 @@
 
 			userData.value = response.data;
 		} catch (error) {
-			console.log(error);
+			if (axios.isAxiosError(error) && error.response?.status === 404) {
+				console.log("User not found");
+			} else {
+				console.error(error);
+			}
+
+			try {
+				const guruResponse = await axios.get(
+					`http://localhost:8080/guru/show/${NIS}`
+				);
+
+				guruData.value = guruResponse.data;
+			} catch (error) {
+				console.log("terjadi kesalahan");
+			}
 		}
 	});
 
@@ -89,6 +119,12 @@
 						class="profile-picture"
 					/>
 					<img
+						v-else-if="guruData?.Profilepicture && !isCropperVisible"
+						:src="getProfilePictureUrl(guruData?.Profilepicture)"
+						alt=""
+						class="profile-picture"
+					/>
+					<img
 						v-else
 						src="../assets/Doge hehe.jpg"
 						alt=""
@@ -100,29 +136,33 @@
 					</div>
 				</div>
 				<p class="nis">001002003</p>
-				<div class="profile-info">
+				<div class="profile-info" v-if="userData || guruData">
 					<p>Nama :</p>
-					<p>{{ userData?.Nama }}</p>
+					<p>{{ userData?.Nama || guruData?.NamaGuru }}</p>
 				</div>
-				<div class="profile-info">
+				<div class="profile-info" v-if="userData">
 					<p>Kelas :</p>
 					<p>{{ userData?.KelasData.NamaKelas }}</p>
 				</div>
-				<div class="profile-info">
+				<div class="profile-info" v-if="userData || guruData">
 					<p>Email :</p>
-					<p>{{ userData?.Email }}</p>
+					<p>{{ userData?.Email || guruData?.Email }}</p>
 				</div>
-				<div class="profile-info">
+				<div class="profile-info" v-if="userData || guruData">
 					<p>No-Telpon :</p>
-					<p>{{ userData?.No_telp }}</p>
+					<p>{{ userData?.No_telp || guruData?.NoTelp }}</p>
 				</div>
-				<div class="profile-info">
+				<div class="profile-info" v-if="userData || guruData">
 					<p>Gender :</p>
-					<p>{{ userData?.Gender }}</p>
+					<p>{{ userData?.Gender || guruData?.Gender }}</p>
 				</div>
-				<div class="profile-info">
+				<div class="profile-info" v-if="userData || guruData">
 					<p>Agama :</p>
-					<p>{{ userData?.Religion }}</p>
+					<p>{{ userData?.Religion || guruData?.Religion }}</p>
+				</div>
+				<div class="profile-info" v-if="guruData">
+					<p>Bidang :</p>
+					<p>{{ guruData?.MapelData.Nama_mapel }}</p>
 				</div>
 			</div>
 			<div class="tugas-container">

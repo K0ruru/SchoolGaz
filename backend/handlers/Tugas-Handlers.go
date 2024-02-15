@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func IndexTugas(c *gin.Context) {
+func GetAllTugas(c *gin.Context) {
 	if dbConn == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "error connection or from the server error"})
 		return
@@ -31,7 +31,7 @@ func GetTugas(c *gin.Context) {
 	id := c.Param("id")
 	var Gettugas model.Tugas
 
-	if err := dbConn.Where("id = ?", id).First(&Gettugas).Error; err != nil {
+	if err := dbConn.Preload("Mapel.KelasData").Where("id = ?", id).First(&Gettugas).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Tugas no found"})
 		fmt.Println(err)
 		return

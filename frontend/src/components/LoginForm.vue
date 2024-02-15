@@ -6,20 +6,21 @@
 	import Toast from "primevue/toast";
 
 	const toast = useToast();
-
 	const nis = ref("");
 	const pass = ref("");
-
 	const router = useRouter();
 
 	const login = async () => {
 		try {
-			const response = await axios.post("http://localhost:8080/Auth/login", {
-				nis: nis.value,
-				passphrase: pass.value,
-			});
+			const studentResponse = await axios.post(
+				"http://localhost:8080/Auth/login",
+				{
+					nis: nis.value,
+					passphrase: pass.value,
+				}
+			);
 
-			const { token, status, nama, NIS } = response.data;
+			const { token, status, nama, NIS } = studentResponse.data;
 
 			if (status !== "active") {
 				toast.add({
@@ -36,19 +37,33 @@
 			localStorage.setItem("nama", nama);
 
 			router.push("/");
-		} catch (error: any) {
-			const axiosError = error as AxiosError<{ error: string }>;
-
-			if (axiosError.response && axiosError.response.status === 400) {
-				const errorData = axiosError.response.data;
+		} catch (studentError: any) {
+			if (studentError.response && studentError.response.status === 400) {
+				const errorData = studentError.response.data;
 
 				if (errorData.error === "User not found") {
-					toast.add({
-						severity: "error",
-						summary: "Error",
-						detail: "Tidak ada user dengan nis itu :(",
-						life: 3000,
-					});
+					// NIS not found in student login, try teacher login
+					try {
+						const teacherResponse = await axios.post(
+							"http://localhost:8080/guru/login",
+							{
+								nis: nis.value,
+								passphrase: pass.value,
+							}
+						);
+
+						const { token, role, NamaGuru, NIS } = teacherResponse.data;
+
+						localStorage.setItem("NIS", NIS);
+						localStorage.setItem("role", role);
+						localStorage.setItem("token", token);
+						localStorage.setItem("nama", NamaGuru);
+
+						router.push("/");
+					} catch (teacherError) {
+						// Handle teacher login error
+						handleLoginErrorTeacher(teacherError);
+					}
 				} else if (errorData.error === "Invalid password") {
 					toast.add({
 						severity: "error",
@@ -57,11 +72,45 @@
 						life: 3000,
 					});
 				} else {
-					console.error("Error logging in:", error);
+					// Generic error message for unexpected errors
+					console.error("Error logging in:", studentError);
 				}
 			} else {
+				// Generic error message for unexpected errors
+				console.error("Error logging in:", studentError);
+			}
+		}
+	};
+
+	// ...
+
+	const handleLoginErrorTeacher = (error: any) => {
+		const axiosError = error as AxiosError<{ error: string }>;
+
+		if (axiosError.response && axiosError.response.status === 400) {
+			const errorData = axiosError.response.data;
+
+			if (errorData.error === "User not found") {
+				toast.add({
+					severity: "error",
+					summary: "Error",
+					detail: "Tidak ada user dengan NIS tersebut.",
+					life: 3000,
+				});
+			} else if (errorData.error === "Invalid password") {
+				toast.add({
+					severity: "error",
+					summary: "Error",
+					detail: "Password yang anda masukkan salah.",
+					life: 3000,
+				});
+			} else {
+				// Generic error message for unexpected errors
 				console.error("Error logging in:", error);
 			}
+		} else {
+			// Generic error message for unexpected errors
+			console.error("Error logging in:", error);
 		}
 	};
 </script>

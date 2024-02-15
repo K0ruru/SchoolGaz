@@ -93,7 +93,7 @@ func Loginguru(c *gin.Context) {
 	}
 
 	// Return the token and role to the client
-	c.JSON(http.StatusOK, gin.H{"token": tokenString, "role": login.Role})
+	c.JSON(http.StatusOK, gin.H{"token": tokenString, "role": login.Role, "NamaGuru": login.NamaGuru, "NIS": login.NIS})
 }
 
 func Updateguru(c *gin.Context) {
