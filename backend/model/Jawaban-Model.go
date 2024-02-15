@@ -1,12 +1,14 @@
 package model
 
 import (
-	"gorm.io/gorm"
+	"time"
 )
 
 type Jawaban struct {
-	gorm.Model
-
-	Isi   string `gorm:"type:text" json:"isi"`
-	Nilai uint32 `gorm:"default:0" json:"nilai"`
+	Id_jawaban int       `gorm:"primary_key"`
+	Isi        string    `gorm:"type:text" json:"isi"`
+	Nilai      uint32    `gorm:"default:0" json:"nilai"`
+	CreateAt   time.Time `json:"create_at"`
+	SiswaNIS   int
+	Siswa      Guru
 }
