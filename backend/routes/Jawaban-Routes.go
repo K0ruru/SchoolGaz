@@ -12,7 +12,7 @@ func JawabanRoutes(router *gin.Engine) {
 		JawabanGroups.GET("/", handlers.GetJawaban)
 		JawabanGroups.GET("/:id_jawaban", handlers.GetJwabanByid)
 		JawabanGroups.POST("/add", handlers.CreateJawaban)
-		JawabanGroups.PUT("/update/:id_jawaban", handlers.UpdateJawaban)
-		JawabanGroups.DELETE("/delete/:id_jawaban", handlers.DeleteJawaban)
+		JawabanGroups.PUT("/:id_jawaban", handlers.UpdateJawaban)
+		JawabanGroups.DELETE("/:id_jawaban", handlers.DeleteJawaban)
 	}
 }

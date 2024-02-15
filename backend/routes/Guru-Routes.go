@@ -12,9 +12,9 @@ func GuruRoutes(router *gin.Engine){
   {
     GuruGroups.POST("/add", handlers.CreateGuru)   
     GuruGroups.POST("/login", handlers.Loginguru)
-    GuruGroups.PUT("/update/:NIS", handlers.Updateguru)
-    GuruGroups.DELETE("/del/:NIS",handlers.DelGuru)
+    GuruGroups.PUT("/:NIS", handlers.Updateguru)
+    GuruGroups.DELETE("/:NIS",handlers.DelGuru)
     GuruGroups.GET("/",handlers.GetALLguru)
-    GuruGroups.GET("/show/:NIS",handlers.GetGuru)
+    GuruGroups.GET("/:NIS",handlers.GetGuru)
   }
 }

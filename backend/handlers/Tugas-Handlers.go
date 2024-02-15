@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func IndexTugas(c *gin.Context) {
+func GetAllTugas(c *gin.Context) {
 	if dbConn == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "error connection or from the server error"})
 		return
