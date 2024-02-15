@@ -60,7 +60,7 @@ func AutoMigrate(db *gorm.DB) error {
 	}
 
 	if !fkUsersJawaban {
-		if err := db.Model(&Jawaban{}).AddForeignKey("siswa_nis", "users(NIS)", "CASCADE", "CASCADE").Error; err != nil {
+		if err := db.Model(&Jawaban{}).AddForeignKey("siswa_nis", "users(NIS)", "SET NULL", "CASCADE").Error; err != nil {
 			return err
 		}
 	}
@@ -70,7 +70,7 @@ func AutoMigrate(db *gorm.DB) error {
 		return err
 	}
 	if !fkGuruTugas {
-		if err := db.Model(&Tugas{}).AddForeignKey("walas_nis", "gurus(NIS)", "CASCADE", "CASCADE").Error; err != nil {
+		if err := db.Model(&Tugas{}).AddForeignKey("walas_nis", "gurus(NIS)", "SET NULL", "CASCADE").Error; err != nil {
 			return err
 		}
 	}
@@ -80,7 +80,7 @@ func AutoMigrate(db *gorm.DB) error {
 	}
 
 	if !fkJawabanTugas {
-		if err := db.Model(&Tugas{}).AddForeignKey("id_jawaban", "jawabans(Id_jawaban)", "CASCADE", "CASCADE").Error; err != nil {
+		if err := db.Model(&Tugas{}).AddForeignKey("id_jawaban", "jawabans(Id_jawaban)", "SET NULL", "CASCADE").Error; err != nil {
 			return err
 		}
 	}

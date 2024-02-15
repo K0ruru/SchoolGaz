@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -51,6 +52,23 @@ func CreateJawaban(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Mengambil NIS dari sesi
+	session := sessions.Default(c)
+	nis := session.Get("NIS") // Ubah "nis" menjadi "NIS" sesuai dengan sesi yang telah Anda set sebelumnya
+	if nis == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NIS not found in session"})
+		return
+	}
+
+	// Konversi nis ke tipe int
+	nisInt, ok := nis.(int)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NIS in session is not an integer"})
+		return
+	}
+
+	jawaban.SiswaNIS = nisInt
 
 	jawaban.CreateAt = time.Now()
 
